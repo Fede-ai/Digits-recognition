@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Artificial-intelligence", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Doodles-recognition", "Doodles-recognition\Doodles-recognition.vcxproj", "{E063211B-FAF0-45EF-8DD6-EC8AAE6A0835}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Process-images", "Process-images\Process-images.vcxproj", "{8BAF080A-18C4-4E74-9C22-CCC675688B34}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -33,14 +31,6 @@ Global
 		{E063211B-FAF0-45EF-8DD6-EC8AAE6A0835}.Release|x64.Build.0 = Release|x64
 		{E063211B-FAF0-45EF-8DD6-EC8AAE6A0835}.Release|x86.ActiveCfg = Release|Win32
 		{E063211B-FAF0-45EF-8DD6-EC8AAE6A0835}.Release|x86.Build.0 = Release|Win32
-		{8BAF080A-18C4-4E74-9C22-CCC675688B34}.Debug|x64.ActiveCfg = Debug|x64
-		{8BAF080A-18C4-4E74-9C22-CCC675688B34}.Debug|x64.Build.0 = Debug|x64
-		{8BAF080A-18C4-4E74-9C22-CCC675688B34}.Debug|x86.ActiveCfg = Debug|Win32
-		{8BAF080A-18C4-4E74-9C22-CCC675688B34}.Debug|x86.Build.0 = Debug|Win32
-		{8BAF080A-18C4-4E74-9C22-CCC675688B34}.Release|x64.ActiveCfg = Release|x64
-		{8BAF080A-18C4-4E74-9C22-CCC675688B34}.Release|x64.Build.0 = Release|x64
-		{8BAF080A-18C4-4E74-9C22-CCC675688B34}.Release|x86.ActiveCfg = Release|Win32
-		{8BAF080A-18C4-4E74-9C22-CCC675688B34}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
