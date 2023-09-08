@@ -20,7 +20,7 @@ App::App()
 	sprite.setPosition(sprite.getGlobalBounds().width / 2 + (viewSize.y - imageSize*28)/2, viewSize.y / 2);
 	font.loadFromFile("resources/font.ttf");
 	text.setFont(font);
-	text.setCharacterSize(40);
+	text.setCharacterSize(55);
 }
 
 void App::run()
@@ -82,7 +82,7 @@ void App::update()
 	bool right = sf::Mouse::isButtonPressed(sf::Mouse::Right);
 	sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-	if ((left || right))// && window.hasFocus() && sprite.getGlobalBounds().contains(mousePos))
+	if ((left || right) && window.hasFocus() && sprite.getGlobalBounds().contains(mousePos))
 	{
 		sf::Vector2f imagePos((mousePos.x - 92.f) / 896.f * imageSize, (mousePos.y - 92.f) / 896.f * imageSize);
 		sf::Vector2f lastImagePos((lastPos.x - 92.f) / 896.f * imageSize, (lastPos.y - 92.f) / 896.f * imageSize);
@@ -106,7 +106,7 @@ void App::draw()
 	for (int i = 0; i < 10; i++)
 	{
 		text.setString(objNames[i][0]);
-		text.setPosition(1400, viewSize.y / 11 * (i + 1) - 10);
+		text.setPosition(1400, viewSize.y / 11 * (i + 1) - 20);
 		text.setOrigin(0, text.getGlobalBounds().height / 2);
 		window.draw(text);
 	}
