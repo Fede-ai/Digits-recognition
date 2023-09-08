@@ -1,10 +1,9 @@
-#include "app.h"
+#include "recognizer.h"
 #include <fstream>
 #include <iostream>
 
-App::App()
+Recognizer::Recognizer()
 {
-	extractData();
 	lastPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
 	drawingImage.create(imageSize, imageSize, sf::Color::White);
@@ -23,7 +22,7 @@ App::App()
 	text.setCharacterSize(55);
 }
 
-void App::run()
+void Recognizer::run()
 {	
 	window.create(sf::VideoMode(sf::VideoMode::getDesktopMode().width * 2 / 3, sf::VideoMode::getDesktopMode().width * 3 / 8), "Doodles recognition");
 	window.setView(sf::View(sf::Vector2f(viewSize.x / 2, viewSize.y / 2), viewSize));
@@ -76,7 +75,7 @@ void App::run()
 	}
 }
 
-void App::update()
+void Recognizer::update()
 {
 	bool left = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 	bool right = sf::Mouse::isButtonPressed(sf::Mouse::Right);
@@ -97,7 +96,7 @@ void App::update()
 	lastPos = mousePos;
 }
 
-void App::draw()
+void Recognizer::draw()
 {		
 	window.clear(sf::Color(15, 40, 70));
 
@@ -114,102 +113,7 @@ void App::draw()
 	window.display();
 }
 
-void App::extractData()
-{
-	std::fstream raw;
-	raw.open("C:/Users/feder/Downloads/full_simplified_butterfly.txt", std::ios::in);
-
-	std::fstream file;
-	file.open("C:/Users/feder/Downloads/butterfly.txt", std::ios::out | std::ios::trunc);
-
-	//format the file and eliminate troll ones
-	for (int i = 0; i < 16000; i++)
-	{
-		std::string line;
-		getline(raw, line);
-		bool valid = true;
-		int apost = 0;
-		for (int pos = 0; pos < line.size(); pos++)
-		{
-			if (line.at(pos) == '"')
-			{
-				apost++;
-				if (apost == 14)
-				{
-					valid = (line.at(pos + 2) == 't');
-					break;
-				}
-			}
-		}
-		if (valid)
-		{
-			while (line.at(0) != '[')
-			{
-				line.erase(line.begin());
-			}
-			line.erase(line.begin());
-			line.erase(line.end() - 1);
-			line.erase(line.end() - 1);
-			line.append(";");
-
-			file << line + "\n";
-		}
-		else
-		{
-			i--;
-		}
-	}
-
-	raw.close();
-	file.close();
-	file.open("C:/Users/feder/Downloads/butterfly.txt", std::ios::in);
-
-	//convert data to image and save it to file
-	for (int i = 0; i < 10; i++)
-	{
-		sf::Image image;
-		image.create(32, 32, sf::Color::White);
-		char div = ' ';
-
-		while (div != ';')
-		{
-			std::vector<float> strokeX;
-			std::vector<float> strokeY;
-			int num;
-			file >> div;
-			file >> div;
-
-			sf::Vector2i value;
-			while (div != ']')
-			{
-				file >> num;
-				strokeX.push_back(num / 8.f);
-				file >> div;
-			}
-			file >> div;
-			file >> div;
-
-			while (div != ']')
-			{
-				file >> num;
-				strokeY.push_back(num / 8.f);
-				file >> div;
-			}
-
-			file >> div;
-			file >> div;
-
-			for (int point = 0; point < strokeX.size() - 1; point++)
-				drawLine(image, strokeX[point], strokeY[point], strokeX[point+1], strokeY[point+1], false);
-		}
-
-		image.saveToFile("C:/Users/feder/Downloads/but/image" + std::to_string(i) + ".png");
-	}
-
-	file.close();
-}
-
-void App::drawLine(sf::Image& image, float x1, float y1, float x2, float y2, bool erase)
+void Recognizer::drawLine(sf::Image& image, float x1, float y1, float x2, float y2, bool erase)
 {
 	float num;
 	if (abs(x1 - x2) > abs(y1 - y2))
@@ -224,9 +128,9 @@ void App::drawLine(sf::Image& image, float x1, float y1, float x2, float y2, boo
 	}
 }
 
-void App::drawPixel(sf::Image& image, float x, float y, bool erase)
+void Recognizer::drawPixel(sf::Image& image, float x, float y, bool erase)
 {
-	auto cap = [this](float pos)
+	auto cap = [](float pos)
 	{
 		return std::min(std::max(pos, 0.f), (float)imageSize-1);
 	};
@@ -249,20 +153,20 @@ void App::drawPixel(sf::Image& image, float x, float y, bool erase)
 			image.setPixel(cap(x), cap(y), sf::Color(strenght, strenght, strenght));
 		if (xOff != 0)
 		{
-			strenght = std::max(abs(int(x + xOff) + 0.5 - x), abs(int(y) + 0.5 - y)) * brightness;
+			strenght = std::max(abs(int(x) + xOff + 0.5 - x), abs(int(y) + 0.5 - y)) * brightness;
 			if (image.getPixel(cap(x + xOff), cap(y)).b > strenght)
 				image.setPixel(cap(x + xOff), cap(y), sf::Color(strenght, strenght, strenght));
 
 			if (yOff != 0)
 			{
-				strenght = std::max(abs(int(x + xOff) + 0.5 - x), abs(int(y + yOff) + 0.5 - y)) * brightness;
+				strenght = std::max(abs(int(x) + xOff + 0.5 - x), abs(int(y) + yOff + 0.5 - y)) * brightness;
 				if (image.getPixel(cap(x + xOff), cap(y + yOff)).b > strenght)
 					image.setPixel(cap(x + xOff), cap(y + yOff), sf::Color(strenght, strenght, strenght));
 			}
 		}
 		if (yOff != 0)
 		{
-			strenght = std::max(abs(int(x) + 0.5 - x), abs(int(y + yOff) + 0.5 - y)) * brightness;
+			strenght = std::max(abs(int(x) + 0.5 - x), abs(int(y) + yOff + 0.5 - y)) * brightness;
 			if (image.getPixel(cap(x), cap(y + yOff)).b > strenght)
 				image.setPixel(cap(x), cap(y + yOff), sf::Color(strenght, strenght, strenght));
 		}

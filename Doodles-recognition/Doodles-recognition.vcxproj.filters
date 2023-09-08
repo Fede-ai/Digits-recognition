@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\app.cpp">
+    <ClCompile Include="src\recognizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -23,7 +23,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\app.h">
+    <ClInclude Include="src\recognizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

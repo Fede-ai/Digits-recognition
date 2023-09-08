@@ -1,8 +1,8 @@
-#include "app.h"
+#include "recognizer.h"
 
 int main()
 {
-	App app;
+	Recognizer app;
 
 	app.run();
 

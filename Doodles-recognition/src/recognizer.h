@@ -1,17 +1,15 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 
-class App
+class Recognizer
 {
 public:
-	App();
+	Recognizer();
 	void run();
 
 private:
 	void update();
 	void draw();
-
-	void extractData();
 
 	void drawLine(sf::Image& image, float x1, float y1, float x2, float y2, bool erase);
 	void drawPixel(sf::Image& image, float x, float y, bool erase);
@@ -21,7 +19,7 @@ private:
 	bool canFullscreen = false;
 	sf::Vector2f lastPos;
 
-	const int imageSize = 32;
+	static constexpr int imageSize = 32;
 	sf::Image drawingImage;
 	sf::Texture texture;
 	sf::Sprite sprite;
