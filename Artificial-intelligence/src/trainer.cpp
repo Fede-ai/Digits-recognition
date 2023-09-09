@@ -12,19 +12,24 @@ Trainer::Trainer()
 	}
 	namesFile.close();
 
-	processImage();
+	processRaw();
 }
 
 void Trainer::run()
 {
 }
 
-void Trainer::processImage()
+void Trainer::processRaw()
 {
 	for (auto name : objNames)
 	{
 		std::fstream raw;
 		raw.open("raw/" + name + ".txt", std::ios::in);
+
+		if (!raw.good())
+			break;
+
+		std::cout << "processing " << name << "\n";
 
 		std::fstream shortened;
 		shortened.open("shortened/" + name + ".txt", std::ios::out | std::ios::trunc);

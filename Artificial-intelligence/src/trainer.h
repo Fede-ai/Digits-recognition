@@ -8,7 +8,7 @@ public:
 	void run();
 
 private:
-	void processImage();
+	void processRaw();
 
 	static void drawPixel(sf::Image& image, float x, float y, bool erase);
 	static void drawLine(sf::Image& image, float x1, float y1, float x2, float y2, bool erase);
