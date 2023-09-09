@@ -27,16 +27,16 @@ private:
 	sf::Font font;
 	sf::Text text;
 
-	const std::string objNames[10][2] = {
-		{"mulino",		"mul"},
-		{"casa",		"cas"},
-		{"lavatrice",	"lav"},
-		{"forchetta",	"for"},
-		{"coltello",	"col"},
-		{"macchina",	"mac"},
-		{"bicicletta",	"bic"},
-		{"barca",		"bar"},
-		{"aeroplano",	"aer"},
-		{"elicottero",	"eli"}
+	std::string objNames[10] = {
+		{""},
+		{""},
+		{""},
+		{""},
+		{""},
+		{""},
+		{""},
+		{""},
+		{""},
+		{""}
 	};
 };

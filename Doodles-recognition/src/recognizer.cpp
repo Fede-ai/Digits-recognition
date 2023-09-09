@@ -4,6 +4,14 @@
 
 Recognizer::Recognizer()
 {
+	std::fstream namesFile;
+	namesFile.open("names.txt", std::ios::in);
+	for (auto& name : objNames)
+	{
+		getline(namesFile, name);
+	}
+	namesFile.close();
+
 	lastPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
 	drawingImage.create(imageSize, imageSize, sf::Color::White);
@@ -95,7 +103,6 @@ void Recognizer::update()
 	}
 	lastPos = mousePos;
 }
-
 void Recognizer::draw()
 {		
 	window.clear(sf::Color(15, 40, 70));
@@ -104,7 +111,7 @@ void Recognizer::draw()
 	window.draw(sprite);
 	for (int i = 0; i < 10; i++)
 	{
-		text.setString(objNames[i][0]);
+		text.setString(objNames[i]);
 		text.setPosition(1400, viewSize.y / 11 * (i + 1) - 20);
 		text.setOrigin(0, text.getGlobalBounds().height / 2);
 		window.draw(text);
@@ -127,7 +134,6 @@ void Recognizer::drawLine(sf::Image& image, float x1, float y1, float x2, float 
 		drawPixel(image, x1 + (x2 - x1) * per, y1 + (y2 - y1) * per, erase);
 	}
 }
-
 void Recognizer::drawPixel(sf::Image& image, float x, float y, bool erase)
 {
 	auto cap = [](float pos)

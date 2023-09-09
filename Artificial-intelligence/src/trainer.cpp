@@ -4,6 +4,15 @@
 
 Trainer::Trainer()
 {
+	std::fstream namesFile;
+	namesFile.open("names.txt", std::ios::in);
+	for (auto& name : objNames)
+	{
+		getline(namesFile, name);
+	}
+	namesFile.close();
+
+	processImage();
 }
 
 void Trainer::run()
@@ -12,97 +21,98 @@ void Trainer::run()
 
 void Trainer::processImage()
 {
-	std::fstream raw;
-	raw.open("C:/Users/feder/Downloads/full_simplified_butterfly.txt", std::ios::in);
-
-	std::fstream file;
-	file.open("C:/Users/feder/Downloads/butterfly.txt", std::ios::out | std::ios::trunc);
-
-	//format the file and eliminate troll ones
-	for (int i = 0; i < 10000; i++)
+	for (auto name : objNames)
 	{
-		std::string line;
-		getline(raw, line);
-		bool valid = true;
-		int apost = 0;
-		for (int pos = 0; pos < line.size(); pos++)
+		std::fstream raw;
+		raw.open("raw/" + name + ".txt", std::ios::in);
+
+		std::fstream shortened;
+		shortened.open("shortened/" + name + ".txt", std::ios::out | std::ios::trunc);
+
+		//format the file and eliminate troll ones
+		for (int i = 0; i < 10000; i++)
 		{
-			if (line.at(pos) == '"')
+			std::string line;
+			getline(raw, line);
+			bool valid = true;
+			int apost = 0;
+			for (int pos = 0; pos < line.size(); pos++)
 			{
-				apost++;
-				if (apost == 14)
+				if (line.at(pos) == '"')
 				{
-					valid = (line.at(pos + 2) == 't');
-					break;
+					apost++;
+					if (apost == 14)
+					{
+						valid = (line.at(pos + 2) == 't');
+						break;
+					}
 				}
 			}
-		}
-		if (valid)
-		{
-			while (line.at(0) != '[')
+			if (valid)
 			{
+				while (line.at(0) != '[')
+				{
+					line.erase(line.begin());
+				}
 				line.erase(line.begin());
+				line.erase(line.end() - 1);
+				line.erase(line.end() - 1);
+				line.append(";");
+
+				shortened << line + "\n";
 			}
-			line.erase(line.begin());
-			line.erase(line.end() - 1);
-			line.erase(line.end() - 1);
-			line.append(";");
-
-			file << line + "\n";
-		}
-		else
-		{
-			i--;
-		}
-	}
-
-	raw.close();
-	file.close();
-	file.open("C:/Users/feder/Downloads/butterfly.txt", std::ios::in);
-
-	//convert data to image and save it to file
-	for (int i = 0; i < 10; i++)
-	{
-		sf::Image image;
-		image.create(32, 32, sf::Color::White);
-		char div = ' ';
-
-		while (div != ';')
-		{
-			std::vector<float> strokeX;
-			std::vector<float> strokeY;
-			int num;
-			file >> div;
-			file >> div;
-
-			sf::Vector2i value;
-			while (div != ']')
+			else
 			{
-				file >> num;
-				strokeX.push_back(num / 8.f);
-				file >> div;
+				i--;
 			}
-			file >> div;
-			file >> div;
-
-			while (div != ']')
-			{
-				file >> num;
-				strokeY.push_back(num / 8.f);
-				file >> div;
-			}
-
-			file >> div;
-			file >> div;
-
-			for (int point = 0; point < strokeX.size() - 1; point++)
-				drawLine(image, strokeX[point], strokeY[point], strokeX[point + 1], strokeY[point + 1], false);
 		}
 
-		image.saveToFile("C:/Users/feder/Downloads/but/image" + std::to_string(i) + ".png");
-	}
+		raw.close();
+		shortened.close();
+		shortened.open("shortened/" + name + ".txt", std::ios::in);
 
-	file.close();
+		//convert data to image and save it to file
+		for (int i = 0; i < 3; i++)
+		{
+			sf::Image image;
+			image.create(32, 32, sf::Color::White);
+			char div = ' ';
+
+			while (div != ';')
+			{
+				std::vector<float> strokeX;
+				std::vector<float> strokeY;
+				int num;
+				shortened >> div;
+				shortened >> div;
+
+				sf::Vector2i value;
+				while (div != ']')
+				{
+					shortened >> num;
+					strokeX.push_back(num / 8.f);
+					shortened >> div;
+				}
+				shortened >> div;
+				shortened >> div;
+
+				while (div != ']')
+				{
+					shortened >> num;
+					strokeY.push_back(num / 8.f);
+					shortened >> div;
+				}
+
+				shortened >> div;
+				shortened >> div;
+
+				for (int point = 0; point < strokeX.size() - 1; point++)
+					drawLine(image, strokeX[point], strokeY[point], strokeX[point + 1], strokeY[point + 1], false);
+			}
+		}
+
+		shortened.close();
+	}
 }
 
 void Trainer::drawLine(sf::Image& image, float x1, float y1, float x2, float y2, bool erase)

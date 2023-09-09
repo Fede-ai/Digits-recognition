@@ -1,0 +1,10 @@
+airplane
+butterfly
+flower
+hat
+house
+light bulb
+mushroom
+octopus
+t-shirt
+windmill

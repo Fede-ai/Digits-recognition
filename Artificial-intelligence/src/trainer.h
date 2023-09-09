@@ -14,4 +14,17 @@ private:
 	static void drawLine(sf::Image& image, float x1, float y1, float x2, float y2, bool erase);
 
 	static constexpr int imageSize = 32;
+
+	std::string objNames[10] = {
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""}
+	};
 };
