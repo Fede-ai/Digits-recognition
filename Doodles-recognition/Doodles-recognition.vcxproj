@@ -133,10 +133,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ai.cpp" />
+    <ClCompile Include="src\layer.cpp" />
     <ClCompile Include="src\recognizer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ai.h" />
+    <ClInclude Include="src\dataPoint.h" />
+    <ClInclude Include="src\layer.h" />
     <ClInclude Include="src\recognizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

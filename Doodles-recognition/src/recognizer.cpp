@@ -3,6 +3,8 @@
 #include <iostream>
 
 Recognizer::Recognizer()
+	:
+	ai(failed)
 {
 	std::fstream namesFile;
 	namesFile.open("names.txt", std::ios::in);
@@ -28,6 +30,8 @@ Recognizer::Recognizer()
 	font.loadFromFile("resources/font.ttf");
 	text.setFont(font);
 	text.setCharacterSize(55);
+
+	updatePredictions();
 }
 
 void Recognizer::run()
@@ -51,6 +55,7 @@ void Recognizer::run()
 				{
 					drawingImage.create(imageSize, imageSize, sf::Color::White);
 					texture.loadFromImage(drawingImage);
+					updatePredictions();
 				}
 			}
 		}
@@ -100,6 +105,7 @@ void Recognizer::update()
 			drawPixel(drawingImage, imagePos.x, imagePos.y, right);
 
 		texture.loadFromImage(drawingImage);
+		updatePredictions();
 	}
 	lastPos = mousePos;
 }
@@ -109,10 +115,25 @@ void Recognizer::draw()
 
 	window.draw(bg);
 	window.draw(sprite);
+
+	std::vector<int> order {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	for (int a = 0; a < 9; a++)
+	{
+		for (int b = a + 1; b < 10; b++)
+		{
+			if (out[order[b]] > out[order[a]])
+			{
+				int temp = order[a];
+				order[a] = order[b];
+				order[b] = temp;
+			}
+		}
+	}
+
 	for (int i = 0; i < 10; i++)
 	{
-		text.setString(objNames[i]);
-		text.setPosition(1400, viewSize.y / 11 * (i + 1) - 20);
+		text.setString(std::to_string(out[order[i]] * 100) + "%\t->\t" + objNames[order[i]]);
+		text.setPosition(1150, viewSize.y / 11 * (i + 1) - 20);
 		text.setOrigin(0, text.getGlobalBounds().height / 2);
 		window.draw(text);
 	}
@@ -195,4 +216,19 @@ void Recognizer::drawPixel(sf::Image& image, float x, float y, bool erase)
 		image.setPixel(cap(x), cap(y + yOff), sf::Color::White);
 		image.setPixel(cap(x + xOff), cap(y + yOff), sf::Color::White);
 	}
+}
+
+void Recognizer::updatePredictions()
+{
+	DataPoint data;
+
+	for (int x = 0; x < imageSize; x++)
+	{
+		for (int y = 0; y < imageSize; y++)
+		{
+			data.inputs.push_back(drawingImage.getPixel(x, y).r / 255.f);
+		}
+	}
+
+	out = ai.calculateOutput(data.inputs);
 }

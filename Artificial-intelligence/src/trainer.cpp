@@ -19,20 +19,23 @@ void Trainer::run()
 
 	while (true)
 	{
-		fillBatch();
-		ai->learn(batch, 0.08);
-		fillBatch(true);
-		std::cout << iteration << ", " << ai->cost(batch) << ", ";
+		std::vector<DataPoint> trainBatch;
+		fillBatch(trainBatch);
+		ai->learn(trainBatch, 0.08);
+		std::vector<DataPoint> testBatch;
+		fillBatch(testBatch, true);
+		std::cout << iteration << ", test cost: " << ai->cost(testBatch) << ", ";
+
 		int correct = 0;
-		for (auto text : batch)
+		for (auto test : testBatch)
 		{
-			std::vector<double> outs = ai->calculateOutput(text.inputs);
+			std::vector<double> outs = ai->calculateOutput(test.inputs);
 			int pos = 0;
 			int exp = 0;
 			double value = outs[0];
 			for (int out = 1; out < 10; out++)
 			{
-				if (text.targets[out] == 1)
+				if (test.targets[out] == 1)
 					exp = out;
 				
 				if (outs[out] > value)
@@ -41,13 +44,13 @@ void Trainer::run()
 					pos = out;
 				}
 			}
-
+	
 			if (pos == exp)
 				correct++;
 		}
-		std::cout << correct << "/40\n";
+		std::cout << "test correctness: " << correct << "/40\n";
 		iteration++;
-
+	
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		{
 			ai->save();
@@ -64,15 +67,14 @@ void Trainer::processRaw()
 
 		if (!raw.good())
 			break;
-
 		std::cout << "processing " << name << "\n";
 
-		std::fstream shortened;
-		shortened.open("shortened/" + name + ".txt", std::ios::out | std::ios::trunc);
-
 		//format the file and eliminate troll ones
-		for (int i = 0; i < 10000; i++)
-		{
+		for (int i = 0; i < 1000; i++)
+		{		
+			std::fstream separated;
+			separated.open("separated/" + name + std::to_string(i) + ".txt", std::ios::out | std::ios::trunc);
+
 			std::string line;
 			getline(raw, line);
 			bool valid = true;
@@ -89,6 +91,7 @@ void Trainer::processRaw()
 					}
 				}
 			}
+			
 			if (valid)
 			{
 				while (line.at(0) != '[')
@@ -100,161 +103,94 @@ void Trainer::processRaw()
 				line.erase(line.end() - 1);
 				line.append(";");
 
-				shortened << line + "\n";
+				separated << line + "\n";
 			}
 			else
 			{
 				i--;
 			}
+			separated.close();
 		}
 
-		shortened.close();
 		raw.close();
 	}
 }
-void Trainer::fillBatch(bool test)
+void Trainer::fillBatch(std::vector<DataPoint>& batch, bool test)
 {
 	batch.clear();
-	if (!test)
-	{
-		for (int obj = 0; obj < 10; obj++)
-		{		
+	for (int obj = 0; obj < 10; obj++)
+	{		
+		for (int nImage = 0; nImage < 4; nImage++)
+		{	
+			int n;
+			if (!test)
+				n = Layer::random(0, 799);
+			else
+				n = Layer::random(800, 999);
+
+			//transfer info from file to image
 			std::fstream file;
-			file.open("shortened/" + objNames[obj] + ".txt", std::ios::in);
-			for (int nImage = 0; nImage < 4; nImage++)
-			{		
-				std::string line;
-				for (int skip = 0; skip < Layer::random(0, 200); skip++)
-					getline(file, line);
+			file.open("separated/" + objNames[obj] + std::to_string(n) + ".txt", std::ios::in);
+			sf::Image image;
+			image.create(32, 32, sf::Color::White);
+			char div = ' ';
+			//each loop iteration is a different stroke
+			while (div != ';')
+			{
+				std::vector<float> strokeX;
+				std::vector<float> strokeY;
+				int num;
+				file >> div;
+				file >> div;
 
-				sf::Image image;
-				image.create(32, 32, sf::Color::White);
-				char div = ' ';
-				while (div != ';')
+				//take all x info
+				while (div != ']')
 				{
-					std::vector<float> strokeX;
-					std::vector<float> strokeY;
-					int num;
+					file >> num;
+					strokeX.push_back(num / 8.f);
 					file >> div;
-					file >> div;
+				}
+				file >> div;
+				file >> div;
 
-					sf::Vector2i value;
-					while (div != ']')
-					{
-						file >> num;
-						strokeX.push_back(num / 8.f);
-						file >> div;
-					}
+				//take all y info
+				while (div != ']')
+				{
+					file >> num;
+					strokeY.push_back(num / 8.f);
 					file >> div;
-					file >> div;
-
-					while (div != ']')
-					{
-						file >> num;
-						strokeY.push_back(num / 8.f);
-						file >> div;
-					}
-
-					file >> div;
-					file >> div;
-
-					for (int point = 0; point < strokeX.size() - 1; point++)
-						drawLine(image, strokeX[point], strokeY[point], strokeX[point + 1], strokeY[point + 1], false);
 				}
 
-				DataPoint datapoint;
-				for (int x = 0; x < 32; x++)
-				{
-					for (int y = 0; y < 32; y++)
-					{
-						datapoint.inputs.push_back(image.getPixel(x, y).r / 255.f);
-					}
-				}
-				for (int tar = 0; tar < 10; tar++)
-				{
-					if (tar == obj)
-						datapoint.targets.push_back(1);
-					else
-						datapoint.targets.push_back(0);
-				}
+				file >> div;
+				file >> div;
 
-				batch.push_back(datapoint);
+				for (int point = 0; point < strokeX.size() - 1; point++)
+					drawLine(image, strokeX[point], strokeY[point], strokeX[point + 1], strokeY[point + 1], false);
 			}
 			file.close();
+
+			DataPoint datapoint;
+			fillDatapoint(datapoint, image, obj);
+			batch.push_back(datapoint);
 		}
 	}
-	else
+}
+
+void Trainer::fillDatapoint(DataPoint& datapoint, sf::Image image, int obj)
+{
+	for (int x = 0; x < 32; x++)
 	{
-		for (int obj = 0; obj < 10; obj++)
+		for (int y = 0; y < 32; y++)
 		{
-			std::fstream file;
-			file.open("shortened/" + objNames[obj] + ".txt", std::ios::in);
-
-			std::string line;
-			for (int skip = 0; skip < 800; skip++)
-				getline(file, line);
-			
-			for (int nImage = 0; nImage < 4; nImage++)
-			{
-				std::string line;
-				for (int skip = 0; skip < Layer::random(0, 50); skip++)
-					getline(file, line);
-
-				sf::Image image;
-				image.create(32, 32, sf::Color::White);
-				char div = ' ';
-				while (div != ';')
-				{
-					std::vector<float> strokeX;
-					std::vector<float> strokeY;
-					int num;
-					file >> div;
-					file >> div;
-
-					sf::Vector2i value;
-					while (div != ']')
-					{
-						file >> num;
-						strokeX.push_back(num / 8.f);
-						file >> div;
-					}
-					file >> div;
-					file >> div;
-
-					while (div != ']')
-					{
-						file >> num;
-						strokeY.push_back(num / 8.f);
-						file >> div;
-					}
-
-					file >> div;
-					file >> div;
-
-					for (int point = 0; point < strokeX.size() - 1; point++)
-						drawLine(image, strokeX[point], strokeY[point], strokeX[point + 1], strokeY[point + 1], false);
-				}
-
-				DataPoint datapoint;
-				for (int x = 0; x < 32; x++)
-				{
-					for (int y = 0; y < 32; y++)
-					{
-						datapoint.inputs.push_back(image.getPixel(x, y).r / 255.f);
-					}
-				}
-				for (int tar = 0; tar < 10; tar++)
-				{
-					if (tar == obj)
-						datapoint.targets.push_back(1);
-					else
-						datapoint.targets.push_back(0);
-				}
-
-				batch.push_back(datapoint);
-			}
-			file.close();
+			datapoint.inputs.push_back(image.getPixel(x, y).r / 255.f);
 		}
+	}
+	for (int tar = 0; tar < 10; tar++)
+	{
+		if (tar == obj)
+			datapoint.targets.push_back(1);
+		else
+			datapoint.targets.push_back(0);
 	}
 }
 
