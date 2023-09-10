@@ -1,0 +1,2 @@
+whenever a file called [any obj name].txt is put in this folder, it is processed and the processed file is put in the "shortened" folder.
+this folder is meant to further simplify files from "quickdraw_dataset/full/simplified"
