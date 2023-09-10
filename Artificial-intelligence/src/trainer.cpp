@@ -1,6 +1,7 @@
 #include "trainer.h"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
 void Trainer::run()
 {	
@@ -48,7 +49,7 @@ void Trainer::run()
 			if (pos == exp)
 				correct++;
 		}
-		std::cout << "test correctness: " << correct << "/40\n";
+		std::cout << "test correctness: " << correct << "/" << testBatch.size() << "\n";
 		iteration++;
 	
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
@@ -73,7 +74,8 @@ void Trainer::processRaw()
 		for (int i = 0; i < 1000; i++)
 		{		
 			std::fstream separated;
-			separated.open("separated/" + name + std::to_string(i) + ".txt", std::ios::out | std::ios::trunc);
+			std::filesystem::create_directories("separated/" + name);
+			separated.open("separated/" + name + "/" + name + std::to_string(i) + ".txt", std::ios::out | std::ios::trunc);
 
 			std::string line;
 			getline(raw, line);
@@ -130,7 +132,7 @@ void Trainer::fillBatch(std::vector<DataPoint>& batch, bool test)
 
 			//transfer info from file to image
 			std::fstream file;
-			file.open("separated/" + objNames[obj] + std::to_string(n) + ".txt", std::ios::in);
+			file.open("separated/" + objNames[obj] + "/" + objNames[obj] + std::to_string(n) + ".txt", std::ios::in);
 			sf::Image image;
 			image.create(32, 32, sf::Color::White);
 			char div = ' ';
@@ -175,7 +177,6 @@ void Trainer::fillBatch(std::vector<DataPoint>& batch, bool test)
 		}
 	}
 }
-
 void Trainer::fillDatapoint(DataPoint& datapoint, sf::Image image, int obj)
 {
 	for (int x = 0; x < 32; x++)
