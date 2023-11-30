@@ -35,7 +35,7 @@ void Layer::setRandomLayerValues()
 		{
 			weights[thisNeuron][neuronBefore] = (random(0, 2000) / 1000.f - 1);
 		}
-		biases[thisNeuron] = (random(0, 10000) / 1000.f - 5);
+		biases[thisNeuron] = (random(0, 4000) / 1000.f - 2);
 	}
 }
 int Layer::random(int min, int max)

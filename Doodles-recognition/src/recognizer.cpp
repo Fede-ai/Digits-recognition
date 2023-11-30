@@ -117,6 +117,10 @@ void Recognizer::draw()
 	window.draw(sprite);
 
 	std::vector<int> order {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	double total = 0;
+	for (int i = 0; i < 10; i++)
+		total += out[i];
+
 	for (int a = 0; a < 9; a++)
 	{
 		for (int b = a + 1; b < 10; b++)
@@ -132,7 +136,7 @@ void Recognizer::draw()
 
 	for (int i = 0; i < 10; i++)
 	{
-		text.setString(std::to_string(out[order[i]] * 100) + "%\t->\t" + objNames[order[i]]);
+		text.setString(std::to_string(out[order[i]] / total) + "%\t->\t" + objNames[order[i]]);
 		text.setPosition(1150, viewSize.y / 11 * (i + 1) - 20);
 		text.setOrigin(0, text.getGlobalBounds().height / 2);
 		window.draw(text);

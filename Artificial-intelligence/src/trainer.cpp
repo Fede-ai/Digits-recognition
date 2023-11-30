@@ -15,14 +15,15 @@ void Trainer::run()
 
 	processRaw();
 
-	ai = new Ai(std::vector<int>{1024, 1500, 700, 10});
+	ai = new Ai(std::vector<int>{784, 30, 10});
 	ai->setRandomValues();
 
 	while (true)
 	{
 		std::vector<DataPoint> trainBatch;
 		fillBatch(trainBatch);
-		ai->learn(trainBatch, 0.08);
+		ai->learn(trainBatch, 0.1);
+
 		std::vector<DataPoint> testBatch;
 		fillBatch(testBatch, true);
 		std::cout << iteration << ", test cost: " << ai->cost(testBatch) << ", ";
@@ -122,7 +123,7 @@ void Trainer::fillBatch(std::vector<DataPoint>& batch, bool test)
 	batch.clear();
 	for (int obj = 0; obj < 10; obj++)
 	{		
-		for (int nImage = 0; nImage < 4; nImage++)
+		for (int nImage = 0; nImage < 10; nImage++)
 		{	
 			int n;
 			if (!test)
@@ -133,8 +134,9 @@ void Trainer::fillBatch(std::vector<DataPoint>& batch, bool test)
 			//transfer info from file to image
 			std::fstream file;
 			file.open("separated/" + objNames[obj] + "/" + objNames[obj] + std::to_string(n) + ".txt", std::ios::in);
+			
 			sf::Image image;
-			image.create(32, 32, sf::Color::White);
+			image.create(imageSize, imageSize, sf::Color::White);
 			char div = ' ';
 			//each loop iteration is a different stroke
 			while (div != ';')
@@ -149,7 +151,7 @@ void Trainer::fillBatch(std::vector<DataPoint>& batch, bool test)
 				while (div != ']')
 				{
 					file >> num;
-					strokeX.push_back(num / 8.f);
+					strokeX.push_back(num / 256.f * imageSize);
 					file >> div;
 				}
 				file >> div;
@@ -159,7 +161,7 @@ void Trainer::fillBatch(std::vector<DataPoint>& batch, bool test)
 				while (div != ']')
 				{
 					file >> num;
-					strokeY.push_back(num / 8.f);
+					strokeY.push_back(num / 256.f * imageSize);
 					file >> div;
 				}
 
@@ -179,9 +181,9 @@ void Trainer::fillBatch(std::vector<DataPoint>& batch, bool test)
 }
 void Trainer::fillDatapoint(DataPoint& datapoint, sf::Image image, int obj)
 {
-	for (int x = 0; x < 32; x++)
+	for (int x = 0; x < imageSize; x++)
 	{
-		for (int y = 0; y < 32; y++)
+		for (int y = 0; y < imageSize; y++)
 		{
 			datapoint.inputs.push_back(image.getPixel(x, y).r / 255.f);
 		}
@@ -228,26 +230,26 @@ void Trainer::drawPixel(sf::Image& image, float x, float y, bool erase)
 		else if (int(y) + 0.5 - y > 0.3)
 			yOff = -1;
 
-		float brightness = 150;
-		float strenght = std::max(abs(int(x) + 0.5 - x), abs(int(y) + 0.5 - y)) * brightness;
+		float brightness = 120;
+		float strenght = 0;//std::max(abs(int(x) + 0.5 - x), abs(int(y) + 0.5 - y)) * brightness;
 		if (image.getPixel(cap(x), cap(y)).b > strenght)
 			image.setPixel(cap(x), cap(y), sf::Color(strenght, strenght, strenght));
 		if (xOff != 0)
 		{
-			strenght = std::max(abs(int(x + xOff) + 0.5 - x), abs(int(y) + 0.5 - y)) * brightness;
+			//strenght = std::max(abs(int(x + xOff) + 0.5 - x), abs(int(y) + 0.5 - y)) * brightness;
 			if (image.getPixel(cap(x + xOff), cap(y)).b > strenght)
 				image.setPixel(cap(x + xOff), cap(y), sf::Color(strenght, strenght, strenght));
 
 			if (yOff != 0)
 			{
-				strenght = std::max(abs(int(x + xOff) + 0.5 - x), abs(int(y + yOff) + 0.5 - y)) * brightness;
+				//strenght = std::max(abs(int(x + xOff) + 0.5 - x), abs(int(y + yOff) + 0.5 - y)) * brightness;
 				if (image.getPixel(cap(x + xOff), cap(y + yOff)).b > strenght)
 					image.setPixel(cap(x + xOff), cap(y + yOff), sf::Color(strenght, strenght, strenght));
 			}
 		}
 		if (yOff != 0)
 		{
-			strenght = std::max(abs(int(x) + 0.5 - x), abs(int(y + yOff) + 0.5 - y)) * brightness;
+			//strenght = std::max(abs(int(x) + 0.5 - x), abs(int(y + yOff) + 0.5 - y)) * brightness;
 			if (image.getPixel(cap(x), cap(y + yOff)).b > strenght)
 				image.setPixel(cap(x), cap(y + yOff), sf::Color(strenght, strenght, strenght));
 		}
