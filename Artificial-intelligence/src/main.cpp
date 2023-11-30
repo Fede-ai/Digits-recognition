@@ -1,10 +1,8 @@
-#include "trainer.h"
+#include "app.h"
 
 int main()
 {
-	Trainer trainer;
+	App app;
 
-	trainer.run();
-
-	return 0;
+	return app.run();
 }

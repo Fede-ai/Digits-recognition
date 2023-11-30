@@ -3,6 +3,10 @@
 
 struct DataPoint
 {
-    std::vector<double> inputs;
-    std::vector<double> targets;
+	DataPoint(std::vector<int> inData, std::vector<int> inTarget) {
+		data = inData;
+		target = inTarget;
+	}
+	std::vector<int> data;	
+	std::vector<int> target;
 };

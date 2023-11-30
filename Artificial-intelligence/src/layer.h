@@ -1,47 +1,19 @@
 #pragma once
 #include <vector>
-#include <SFML/Graphics.hpp>
 
-class Layer
-{
+class Layer {
 public:
-	//input layer is not a layer
-	//layer obj contains the nodes and the wheights between the nodes of this layer and the previus one
-	Layer(int inSizeBef, int inSizeAft);
+	Layer(int inNumBef, int inNumAft);
+	std::vector<double> compute(std::vector<double> inputs);
+	std::vector<double> computeOutput(std::vector<double> inputs);
 
-	void setRandomLayerValues();
 	static int random(int min, int max);
-	std::vector<double> calculateLayer(std::vector<double> nodesBef);
 
-	void updateGradients(std::vector<double> nodeValuesAft);
-	void applyGradients(double learnRate);
-	void clearGradients();
+private:
+	int numBef = 0, numAft = 0;
 
-	std::vector<double> calculateOutputLayerNodeValues(std::vector<double> expectedValue);
-	std::vector<double> calculateHiddenLayerNodeValues(std::vector<double> nodeValuesAft, std::vector<std::vector<double>> weightsAft);
-
-	//the number of nodes in the layer
-	int sizeAft;
-	int sizeBef;
-
-	//the weighted values after passing through the activation function
-	std::vector<double> activatedValues;
+	//relative to the nodes after
 	std::vector<double> biases;
-	//how to access correct weight -> weights[nodeAft][nodeBef]
+	//notation = weights[nodeBef][nodeAft]
 	std::vector<std::vector<double>> weights;
-
-private:	
-	//the activated values that come out of the layer before | for backpropagation
-	std::vector<double> lastLayerActivatedValues;
-	//the activated values before passing through the activation function | for backpropagation
-	std::vector<double> weightedValues;
-
-	//for backpropagation
-	std::vector<double> gradientsBiases;
-	//for backpropagation
-	std::vector<std::vector<double>> gradientsWeights;
-
-	double activationFunction(double weightedValue);
-	double activationFunctionDerivative(double weightedValue);
-	double nodeCostDerivative(double activatedValue, double expectedValue);
 };

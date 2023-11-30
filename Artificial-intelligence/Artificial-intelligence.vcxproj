@@ -136,15 +136,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ai.cpp" />
+    <ClCompile Include="src\app.cpp" />
     <ClCompile Include="src\layer.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\trainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ai.h" />
+    <ClInclude Include="src\app.h" />
     <ClInclude Include="src\dataPoint.h" />
     <ClInclude Include="src\layer.h" />
-    <ClInclude Include="src\trainer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
