@@ -174,9 +174,8 @@ double Ai::cost(std::vector<DataPoint> datapoints)
 	for (auto datapoint : datapoints)
 	{
 		std::vector<double> outputs = calculateOutput(datapoint.inputs);
-		for (int output = 0; output < outputs.size(); output++)
-		{
-			cost += std::pow(outputs[output] - datapoint.targets[output], 2);
+		for (int output = 0; output < outputs.size(); output++) {
+			cost += datapoint.targets[output] * log(outputs[output] + 1e-15);
 		}
 	}
 	return cost / datapoints.size();

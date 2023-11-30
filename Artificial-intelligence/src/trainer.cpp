@@ -19,7 +19,7 @@ void Trainer::run()
 	ai->setRandomValues();
 
 	while (true)
-	{
+	{		
 		std::vector<DataPoint> trainBatch;
 		fillBatch(trainBatch);
 		ai->learn(trainBatch, 0.1);
@@ -51,7 +51,7 @@ void Trainer::run()
 				correct++;
 		}
 		std::cout << "test correctness: " << correct << "/" << testBatch.size() << "\n";
-		iteration++;
+		iteration++;		
 	
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		{

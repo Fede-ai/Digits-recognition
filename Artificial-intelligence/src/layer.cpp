@@ -139,5 +139,5 @@ double Layer::activationFunctionDerivative(double weightedValue)
 }
 double Layer::nodeCostDerivative(double activatedValue, double expectedValue)
 {
-	return 2 * (activatedValue - expectedValue);
+	return -expectedValue / (activatedValue + 1e-15);  // Add a small epsilon to avoid division by zero
 }
