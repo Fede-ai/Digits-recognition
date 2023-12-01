@@ -164,7 +164,7 @@ void Ai::learn(std::vector<DataPoint> trainingData, double learnRate)
 	}
 	for (auto& layer : layers)
 	{
-		layer.applyGradients(learnRate / trainingData.size());
+		layer.applyAllGradients(learnRate / trainingData.size());
 		layer.clearGradients();
 	}
 }

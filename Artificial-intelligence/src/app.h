@@ -8,5 +8,8 @@ public:
 	int run();
 
 private:
+	void fillDatasets();
 
+	std::vector<DataPoint> trainingData;
+	std::vector<DataPoint> testData;
 };

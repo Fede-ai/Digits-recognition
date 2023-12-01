@@ -1,11 +1,15 @@
 #pragma once
 #include <vector>
+#include "dataPoint.h"
 #include "layer.h"
 
 class Ai {
 public:
 	Ai(std::vector<int> inSize);
-	std::vector<double> forward(std::vector<int> data);
+	std::vector<double> forwardProp(std::vector<int> data);
+	double cost(std::vector<DataPoint> datapoints);
+	void backProp(std::vector<DataPoint> datapoints);
+	void applyAllGradients();
 
 private:
 	std::vector<int> sizes;

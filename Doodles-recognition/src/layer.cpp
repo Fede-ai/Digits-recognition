@@ -74,7 +74,7 @@ void Layer::updateGradients(std::vector<double> nodeValuesAft)
 		gradientsBiases[thisNeuron] += nodeValuesAft[thisNeuron];
 	}
 }
-void Layer::applyGradients(double learnRate)
+void Layer::applyAllGradients(double learnRate)
 {
 	for (int thisNeuron = 0; thisNeuron < activatedValues.size(); thisNeuron++)
 	{

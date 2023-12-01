@@ -14,6 +14,8 @@ private:
 
 	//relative to the nodes after
 	std::vector<double> biases;
+	std::vector<double> biasesGradients;
 	//notation = weights[nodeBef][nodeAft]
 	std::vector<std::vector<double>> weights;
+	std::vector<std::vector<double>> weightsGradients;
 };

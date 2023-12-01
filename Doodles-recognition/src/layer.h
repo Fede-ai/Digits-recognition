@@ -14,7 +14,7 @@ public:
 	std::vector<double> calculateLayer(std::vector<double> nodesBef);
 
 	void updateGradients(std::vector<double> nodeValuesAft);
-	void applyGradients(double learnRate);
+	void applyAllGradients(double learnRate);
 	void clearGradients();
 
 	std::vector<double> calculateOutputLayerNodeValues(std::vector<double> expectedValue);
