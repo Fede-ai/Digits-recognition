@@ -168,18 +168,18 @@ void Ai::learn(std::vector<DataPoint> trainingData, double learnRate)
 		layer.clearGradients();
 	}
 }
-double Ai::cost(std::vector<DataPoint> datapoints)
+double Ai::loss(std::vector<DataPoint> datapoints)
 {
-	double cost = 0;
+	double loss = 0;
 	for (auto datapoint : datapoints)
 	{
 		std::vector<double> outputs = calculateOutput(datapoint.inputs);
 		for (int output = 0; output < outputs.size(); output++)
 		{
-			cost += std::pow(outputs[output] - datapoint.targets[output], 2);
+			loss += std::pow(outputs[output] - datapoint.targets[output], 2);
 		}
 	}
-	return cost / datapoints.size();
+	return loss / datapoints.size();
 }
 
 std::vector<int> Ai::getSize() const

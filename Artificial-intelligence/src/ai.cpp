@@ -22,24 +22,52 @@ std::vector<double> Ai::forwardProp(std::vector<int> data)
 	return values;
 }
 
-double Ai::cost(std::vector<DataPoint> datapoints)
+double Ai::loss(std::vector<DataPoint> datapoints)
 {
-	double cost = 0;
+	double loss = 0;
 	for (auto datapoint : datapoints)
 	{
 		std::vector<double> predictions = forwardProp(datapoint.data);
 		for (int nOut = 0; nOut < predictions.size(); nOut++)
 		{
-			cost += (predictions[nOut] - datapoint.target[nOut]) * (predictions[nOut] - datapoint.target[nOut]);
+			loss += (predictions[nOut] - datapoint.target[nOut]) * (predictions[nOut] - datapoint.target[nOut]);
 		}
 	}
-	return (cost / datapoints.size());
+	return (loss / datapoints.size());
+}
+
+void Ai::learn(std::vector<DataPoint> datapoints, double learnRate)
+{
+	backProp(datapoints);
+
+	for (auto& layer : layers)
+		layer.applyGradients(learnRate/datapoints.size());
 }
 
 void Ai::backProp(std::vector<DataPoint> datapoints)
 {
-}
+	const double h = 0.0001;
+	const double initialLoss = loss(datapoints);
 
-void Ai::applyAllGradients()
-{
+	for (auto& layer : layers)
+	{
+		for (int bef = 0; bef < layer.numBef; bef++)
+		{
+			for (int aft = 0; aft < layer.numAft; aft++)
+			{
+				layer.weights[bef][aft] += h;
+				double deltaLoss = loss(datapoints) - initialLoss;
+				layer.weights[bef][aft] -= h;
+				layer.weightsGradients[bef][aft] = deltaLoss / h;
+			}
+		}
+
+		for (int aft = 0; aft < layer.numAft; aft++)
+		{
+			layer.biases[aft] += h;
+			double deltaLoss = loss(datapoints) - initialLoss;
+			layer.biases[aft] -= h;
+			layer.biasesGradients[aft] = deltaLoss / h;
+		}
+	}
 }

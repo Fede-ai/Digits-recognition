@@ -7,11 +7,11 @@ class Ai {
 public:
 	Ai(std::vector<int> inSize);
 	std::vector<double> forwardProp(std::vector<int> data);
-	double cost(std::vector<DataPoint> datapoints);
-	void backProp(std::vector<DataPoint> datapoints);
-	void applyAllGradients();
+	double loss(std::vector<DataPoint> datapoints);
+	void learn(std::vector<DataPoint> datapoints, double learnRate);
 
-private:
+private:	
+	void backProp(std::vector<DataPoint> datapoints);
 	std::vector<int> sizes;
 	std::vector<Layer> layers;
 };

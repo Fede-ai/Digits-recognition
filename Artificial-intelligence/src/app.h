@@ -9,7 +9,12 @@ public:
 
 private:
 	void fillDatasets();
+	static std::vector<DataPoint> createBatch(std::vector<DataPoint> dataset, int num);
 
-	std::vector<DataPoint> trainingData;
-	std::vector<DataPoint> testData;
+	Ai ai;
+
+	std::vector<DataPoint> trainingDataset;
+	int trainingDatasetSize = 10'000;
+	std::vector<DataPoint> testingDataset;
+	int testDatasetSize = 1'000;
 };

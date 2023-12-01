@@ -6,21 +6,22 @@
 #include <SFML/Graphics.hpp>
 
 App::App()
+	:
+	ai({ 784, 30, 10 })
 {
-
+	fillDatasets();
+	std::cout << "finished loading the images\n";
 }
 
 int App::run()
 {
-	Ai ai({ 784, 30, 10 });
-
-	fillDatasets();
-
-	std::cout << "finished loading the images\n";
-
+	int i = 0;
 	while (true)
 	{
-		
+		auto testingBatch = createBatch(testingDataset, 128);
+		std::cout << i++ << ", test loss: " << ai.loss(testingBatch) << "\n";
+		auto trainingBatch = createBatch(trainingDataset, 32);
+		ai.learn(trainingBatch, 1);
 	}
 
 	return 0;
@@ -48,7 +49,7 @@ void App::fillDatasets()
 
 	std::fstream test("data/test.csv");
 	test.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //skip labels row
-	for (int nImg = 0; nImg < 1'000; nImg++)
+	for (int nImg = 0; nImg < testDatasetSize; nImg++)
 	{
 		std::string line;
 		getline(test, line);
@@ -71,13 +72,13 @@ void App::fillDatasets()
 			data.push_back(stoi(dataStr));
 		}
 	
-		testData.push_back(DataPoint(data, targets));
+		testingDataset.push_back(DataPoint(data, targets));
 	}
 	test.close();
 
 	std::fstream train("data/train.csv");
 	train.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //skip labels row
-	for (int nImg = 0; nImg < 30'000; nImg++)
+	for (int nImg = 0; nImg < trainingDatasetSize; nImg++)
 	{
 		std::string line;
 		getline(train, line);
@@ -100,7 +101,40 @@ void App::fillDatasets()
 			data.push_back(stoi(dataStr));
 		}
 
-		trainingData.push_back(DataPoint(data, targets));
+		trainingDataset.push_back(DataPoint(data, targets));
 	}
 	train.close();
+}
+
+std::vector<DataPoint> App::createBatch(std::vector<DataPoint> dataset, int num)
+{
+	if (dataset.size() < num)
+		std::exit(1000);
+
+	std::vector<DataPoint> batch;	
+	std::vector<int> used;
+	for (int i = 0; i < num; i++)
+	{
+		bool valid = true;
+		int index = Layer::random(0, dataset.size() - 1);
+		//chech if datapoint was already taken
+		for (auto n : used)
+		{
+			if (index == n)
+				valid = false;
+		}
+		//if not, take datapoint
+		if (valid)
+		{
+			batch.push_back(dataset[index]);
+			used.push_back(index);
+		}
+		//else, retry
+		else
+		{
+			i--;
+		}
+	}
+
+	return batch;
 }

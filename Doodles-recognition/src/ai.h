@@ -23,7 +23,7 @@ public:
 	std::vector<double> calculateOutput(std::vector<double> inputs);
 
 	void learn(std::vector<DataPoint> trainingData, double learnRate);
-	double cost(std::vector<DataPoint> datapoints);
+	double loss(std::vector<DataPoint> datapoints);
 	
 	//including the input layer
 	std::vector<int> getSize() const;
