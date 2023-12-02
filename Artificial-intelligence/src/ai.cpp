@@ -12,7 +12,7 @@ std::vector<double> Ai::forwardProp(std::vector<int> data)
 {
 	std::vector<double> dataDouble;
 	for (auto d : data)
-		dataDouble.push_back(d);
+		dataDouble.push_back(d/255.f); //idk if the /255.f is necessary
 
 	std::vector<double> values = layers[0].compute(dataDouble);
 	for (int layer = 1; layer < layers.size() - 1; layer++)
