@@ -14,9 +14,9 @@ std::vector<double> Ai::forwardProp(std::vector<int> data)
 	for (auto d : data)
 		dataDouble.push_back(d/255.f); //idk if the /255.f is necessary
 
-	std::vector<double> values = layers[0].compute(dataDouble);
+	std::vector<double> values = layers[0].computeHidden(dataDouble);
 	for (int layer = 1; layer < layers.size() - 1; layer++)
-		values = layers[layer].compute(values);
+		values = layers[layer].computeHidden(values);
 	values = layers[layers.size() - 1].computeOutput(values);
 
 	return values;

@@ -20,7 +20,7 @@ int App::run()
 	{
 		auto testingBatch = createBatch(testingDataset, 128);
 		int correct = 0;
-		for (auto datapoint : testingBatch)
+		for (auto& datapoint : testingBatch)
 		{
 			if (getPrediction(datapoint) == getTarget(datapoint))
 				correct++;
@@ -157,7 +157,6 @@ int App::getPrediction(DataPoint datapoint)
 	}
 	return highest;
 }
-
 int App::getTarget(DataPoint datapoint)
 {
 	int highest = 0;

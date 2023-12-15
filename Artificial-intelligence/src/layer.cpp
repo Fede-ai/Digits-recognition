@@ -27,7 +27,7 @@ Layer::Layer(int inNumBef, int inNumAft)
 	}
 }
 
-std::vector<double> Layer::compute(std::vector<double> inputs)
+std::vector<double> Layer::computeHidden(std::vector<double> inputs)
 {
 	if (inputs.size() != numBef)
 		std::exit(1000);
@@ -41,7 +41,7 @@ std::vector<double> Layer::compute(std::vector<double> inputs)
 		{
 			value += inputs[bef] * weights[bef][aft];
 		}
-		values.push_back(std::max(value, double(0)));
+		values.push_back(hiddenAct(value));
 	}
 
 	return values;
@@ -61,7 +61,7 @@ std::vector<double> Layer::computeOutput(std::vector<double> inputs)
 		{
 			value += inputs[bef] * weights[bef][aft];
 		}
-		values.push_back(0.5 * (value / (1 + abs(value)) + 1)); //sigmoid approssimation
+		values.push_back(outputAct(value));
 	}
 
 	//double sum = 0;
@@ -83,11 +83,20 @@ void Layer::applyGradients(double learnRate)
 			weights[bef][aft] -= weightsGradients[bef][aft] * learnRate;
 		}
 	}
-
+		
 	for (int aft = 0; aft < numAft; aft++)
 	{
 		biases[aft] -= biasesGradients[aft] * learnRate;
 	}
+}	
+
+double Layer::hiddenAct(double value)
+{
+	return 1 / (1 + exp(-value));
+}
+double Layer::outputAct(double value)
+{
+	return 1 / (1 + exp(-value));
 }
 
 int Layer::random(int min, int max)

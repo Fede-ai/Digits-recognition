@@ -4,10 +4,12 @@
 class Layer {
 public:
 	Layer(int inNumBef, int inNumAft);
-	std::vector<double> compute(std::vector<double> inputs);
+	std::vector<double> computeHidden(std::vector<double> inputs);
 	std::vector<double> computeOutput(std::vector<double> inputs);
 	void applyGradients(double learnRate);
 
+	static double hiddenAct(double value);
+	static double outputAct(double value);
 	static int random(int min, int max);
 	int numBef = 0, numAft = 0;
 
@@ -18,6 +20,6 @@ public:
 	std::vector<std::vector<double>> weights;
 	std::vector<std::vector<double>> weightsGradients;
 
-public:
+private:
 
 };
