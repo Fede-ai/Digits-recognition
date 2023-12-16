@@ -27,7 +27,7 @@ int App::run()
 		}
 		std::cout << i++ << ", test loss: " << ai.loss(testingBatch) << ", test accuracy: " << correct << "/128\n";
 		auto trainingBatch = createBatch(trainingDataset, 16);
-		ai.learn(trainingBatch, 1);
+		ai.learn(trainingBatch, 0.5);
 	}
 
 	return 0;
@@ -147,7 +147,7 @@ std::vector<DataPoint> App::createBatch(std::vector<DataPoint> dataset, int num)
 
 int App::getPrediction(DataPoint datapoint)
 {
-	auto predictions = ai.forwardProp(datapoint.data);
+	auto predictions = ai.forwardProp(datapoint);
 	int highest = 0;
 
 	for (int i = 1; i < predictions.size(); i++)

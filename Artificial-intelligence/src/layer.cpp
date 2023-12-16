@@ -32,7 +32,9 @@ std::vector<double> Layer::computeHidden(std::vector<double> inputs)
 	if (inputs.size() != numBef)
 		std::exit(1000);
 
+	inputValues = inputs;
 	std::vector<double> values;
+	weightedValues.clear();
 
 	for (int aft = 0; aft < numAft; aft++)
 	{
@@ -41,18 +43,38 @@ std::vector<double> Layer::computeHidden(std::vector<double> inputs)
 		{
 			value += inputs[bef] * weights[bef][aft];
 		}
+		weightedValues.push_back(value);
 		values.push_back(hiddenAct(value));
 	}
 
+	activatedValues = values;
 	return values;
 }
+std::vector<double> Layer::computeHiddenNodeValues(std::vector<double> nodeValuesAfter, Layer layerAft)
+{
+	std::vector<double> nodeValues;
 
+	for (int aft = 0; aft < numAft; aft++)
+	{
+		double nodeValue = 0;
+		for (int aftAft = 0; aftAft < layerAft.numAft; aftAft++)
+		{
+			double inputDerivative = layerAft.weights[aft][aftAft];
+			nodeValue += inputDerivative * nodeValuesAfter[aftAft];
+		}
+		nodeValues.push_back(nodeValue * hiddenActDerivative(weightedValues[aft]));
+	}
+
+	return nodeValues;
+}
 std::vector<double> Layer::computeOutput(std::vector<double> inputs)
 {
 	if (inputs.size() != numBef)
 		std::exit(1000);
 
+	inputValues = inputs;
 	std::vector<double> values;
+	weightedValues.clear();
 
 	for (int aft = 0; aft < numAft; aft++)
 	{
@@ -61,19 +83,43 @@ std::vector<double> Layer::computeOutput(std::vector<double> inputs)
 		{
 			value += inputs[bef] * weights[bef][aft];
 		}
+		weightedValues.push_back(value);
 		values.push_back(outputAct(value));
 	}
 
-	//double sum = 0;
-	//for (auto value : values)
-	//	sum += exp(value);
-	//
-	//for (auto& value : values)
-	//	value = exp(value) / sum;
-
+	activatedValues = values;
 	return values;
 }
+std::vector<double> Layer::computeOutputNodeValues(std::vector<double> targets)
+{
+	std::vector<double> nodeValues;
 
+	for (int aft = 0; aft < numAft; aft++)
+	{
+		double costDerivative = 2 * (activatedValues[aft] - targets[aft]);
+		double activationDerivative = outputActDerivative(weightedValues[aft]);
+		nodeValues.push_back(costDerivative * activationDerivative);
+	}
+
+	return nodeValues;
+}
+
+void Layer::updateGradients(std::vector<double> nodeValues)
+{
+	for (int bef = 0; bef < numBef; bef++)
+	{
+		for (int aft = 0; aft < numAft; aft++)
+		{
+			double weightDerivative = inputValues[bef] * nodeValues[aft];
+			weightsGradients[bef][aft] += weightDerivative;
+		}
+	}
+
+	for (int aft = 0; aft < numAft; aft++)
+	{
+		biasesGradients[aft] += nodeValues[aft];
+	}
+}
 void Layer::applyGradients(double learnRate)
 {
 	for (int bef = 0; bef < numBef; bef++)
@@ -88,15 +134,40 @@ void Layer::applyGradients(double learnRate)
 	{
 		biases[aft] -= biasesGradients[aft] * learnRate;
 	}
-}	
+}
+void Layer::clearGradients() 
+{
+	for (int bef = 0; bef < numBef; bef++)
+	{
+		for (int aft = 0; aft < numAft; aft++)
+		{
+			weightsGradients[bef][aft] = 0;
+		}
+	}
+
+	for (int aft = 0; aft < numAft; aft++)
+	{
+		biasesGradients[aft] = 0;
+	}
+}
 
 double Layer::hiddenAct(double value)
 {
 	return 1 / (1 + exp(-value));
 }
+double Layer::hiddenActDerivative(double value)
+{
+	double activated = outputAct(value);
+	return activated * (1 - activated);
+}
 double Layer::outputAct(double value)
 {
 	return 1 / (1 + exp(-value));
+}
+double Layer::outputActDerivative(double value)
+{
+	double activated = outputAct(value);
+	return activated * (1 - activated);
 }
 
 int Layer::random(int min, int max)
