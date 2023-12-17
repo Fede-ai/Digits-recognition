@@ -1,1 +1,1 @@
-# Doodles-recognition
+# Digits-recognition
