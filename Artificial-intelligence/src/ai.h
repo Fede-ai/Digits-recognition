@@ -9,6 +9,7 @@ public:
 	std::vector<double> forwardProp(DataPoint datapoint);
 	double loss(std::vector<DataPoint> datapoints);
 	void learn(std::vector<DataPoint> datapoints, double learnRate);
+	void save() const;
 
 private:	
 	void backProp(DataPoint datapoint);

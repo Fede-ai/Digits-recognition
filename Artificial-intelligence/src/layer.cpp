@@ -2,10 +2,10 @@
 #include <random>
 
 Layer::Layer(int inNumBef, int inNumAft)
+	:
+	numBef(inNumBef),
+	numAft(inNumAft)
 {
-	numBef = inNumBef;
-	numAft = inNumAft;
-
 	//setup biases
 	for (int bias = 0; bias < numAft; bias++)
 	{
@@ -50,7 +50,7 @@ std::vector<double> Layer::computeHidden(std::vector<double> inputs)
 	activatedValues = values;
 	return values;
 }
-std::vector<double> Layer::computeHiddenNodeValues(std::vector<double> nodeValuesAfter, Layer layerAft)
+std::vector<double> Layer::computeHiddenNodeValues(std::vector<double> nodeValuesAfter, Layer layerAft) const
 {
 	std::vector<double> nodeValues;
 
@@ -62,7 +62,7 @@ std::vector<double> Layer::computeHiddenNodeValues(std::vector<double> nodeValue
 			double inputDerivative = layerAft.weights[aft][aftAft];
 			nodeValue += inputDerivative * nodeValuesAfter[aftAft];
 		}
-		nodeValues.push_back(nodeValue * hiddenActDerivative(weightedValues[aft]));
+		nodeValues.push_back(nodeValue * hiddenActDer(weightedValues[aft]));
 	}
 
 	return nodeValues;
@@ -90,15 +90,15 @@ std::vector<double> Layer::computeOutput(std::vector<double> inputs)
 	activatedValues = values;
 	return values;
 }
-std::vector<double> Layer::computeOutputNodeValues(std::vector<double> targets)
+std::vector<double> Layer::computeOutputNodeValues(std::vector<double> targets) const
 {
 	std::vector<double> nodeValues;
 
 	for (int aft = 0; aft < numAft; aft++)
 	{
-		double costDerivative = 2 * (activatedValues[aft] - targets[aft]);
-		double activationDerivative = outputActDerivative(weightedValues[aft]);
-		nodeValues.push_back(costDerivative * activationDerivative);
+		double lossDerivative = lossDer(activatedValues[aft], targets[aft]);
+		double activationDerivative = outputActDer(weightedValues[aft]);
+		nodeValues.push_back(lossDerivative * activationDerivative);
 	}
 
 	return nodeValues;
@@ -153,21 +153,40 @@ void Layer::clearGradients()
 
 double Layer::hiddenAct(double value)
 {
+	//sigmoid
 	return 1 / (1 + exp(-value));
+
+	//ReLU
+	//return std::max(value, double(0));
 }
-double Layer::hiddenActDerivative(double value)
+double Layer::hiddenActDer(double value)
 {
+	//sigmoid
 	double activated = outputAct(value);
 	return activated * (1 - activated);
+
+	//ReLU
+	//if (value < 0)
+	//	return 0;
+	//return 1;
 }
 double Layer::outputAct(double value)
 {
 	return 1 / (1 + exp(-value));
 }
-double Layer::outputActDerivative(double value)
+double Layer::outputActDer(double value)
 {
 	double activated = outputAct(value);
 	return activated * (1 - activated);
+}
+
+double Layer::loss(double value, double target)
+{
+	return (value - target) * (value - target);
+}
+double Layer::lossDer(double value, double target)
+{
+	return 2 * (value - target);
 }
 
 int Layer::random(int min, int max)

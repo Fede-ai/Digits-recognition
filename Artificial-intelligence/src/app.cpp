@@ -3,11 +3,12 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <SFML/Graphics.hpp>
+#include <thread>
+//#include <SFML/Graphics.hpp>
 
 App::App()
 	:
-	ai({ 784, 30, 10 })
+	ai({ 784, 100, 10 })
 {
 	fillDatasets();
 	std::cout << "finished loading the images\n";
@@ -25,9 +26,19 @@ int App::run()
 			if (getPrediction(datapoint) == getTarget(datapoint))
 				correct++;
 		}
-		std::cout << i++ << ", test loss: " << ai.loss(testingBatch) << ", test accuracy: " << correct << "/128\n";
-		auto trainingBatch = createBatch(trainingDataset, 16);
-		ai.learn(trainingBatch, 0.5);
+
+		if (i % 10 == 0)
+			std::cout << i << ", loss: " << ai.loss(testingBatch) << ", correct: " << correct << "/128 - " << correct / 1.28 << "%\n";
+
+		auto trainingBatch = createBatch(trainingDataset, 64);
+		ai.learn(trainingBatch, 0.3);
+		i++;
+
+		if (i % 101 == 0)
+		{
+			ai.save();
+			std::cout << "saved\n";
+		}
 	}
 
 	return 0;
@@ -118,28 +129,11 @@ std::vector<DataPoint> App::createBatch(std::vector<DataPoint> dataset, int num)
 		std::exit(1000);
 
 	std::vector<DataPoint> batch;	
-	std::vector<int> used;
 	for (int i = 0; i < num; i++)
 	{
-		bool valid = true;
 		int index = Layer::random(0, dataset.size() - 1);
-		//chech if datapoint was already taken
-		for (auto n : used)
-		{
-			if (index == n)
-				valid = false;
-		}
-		//if not, take datapoint
-		if (valid)
-		{
-			batch.push_back(dataset[index]);
-			used.push_back(index);
-		}
-		//else, retry
-		else
-		{
-			i--;
-		}
+		batch.push_back(dataset[index]);
+		dataset.erase(dataset.begin() + index);
 	}
 
 	return batch;

@@ -15,7 +15,7 @@ private:
 
 	Ai ai;
 	std::vector<DataPoint> trainingDataset;
-	int trainingDatasetSize = 10'000;
+	int trainingDatasetSize = 50'000;
 	std::vector<DataPoint> testingDataset;
-	int testDatasetSize = 1'000;
+	int testDatasetSize = 5'000;
 };
