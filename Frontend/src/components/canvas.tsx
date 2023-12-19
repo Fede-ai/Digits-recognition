@@ -1,4 +1,5 @@
 import React, {useEffect, useState, FC} from "react";
+import canvasStyle from './canvas.module.css';
 
 interface Point {
   x: number;
@@ -6,19 +7,27 @@ interface Point {
 }
 
 const Canvas:FC = (props) => {
-	const canvasWidth = 400;
-  const canvasHeight = 400;
-
+	const [height, setHeight] = useState(window.innerWidth);
   const [isDrawing, setIsDrawing] = useState(false);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const [prevPoint, setPrevPoint] = useState<Point | null>(null);
 
-	useEffect(() => {
-		const canvas = document.getElementById('canvas') as HTMLCanvasElement;;
-		const ctx = canvas?.getContext('2d');
-		if (ctx) {
-      setContext(ctx);
+	var canvasSide = 0.3 * height;
+
+	useEffect(() => {	
+		const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+		const ctx = canvas.getContext('2d');
+		if (ctx) {		
+			ctx.fillStyle = '#000';
+			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      setContext(ctx);	
     }
+
+		window.addEventListener('resize', () => {
+			setHeight(window.innerWidth);
+			const ctx = canvas.getContext('2d');
+			if(ctx) ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		});
 	}, [])
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
@@ -37,9 +46,9 @@ const Canvas:FC = (props) => {
 
     const currentPoint: Point = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 
-    context.strokeStyle = '#000'; // Set stroke color
+    context.strokeStyle = '#FFF	'; // Set stroke color
     context.lineJoin = 'round';
-    context.lineWidth = 30;
+    context.lineWidth = canvasSide / 14;
 
     context.beginPath();
     context.moveTo(prevPoint?.x || 0, prevPoint?.y || 0);
@@ -54,9 +63,9 @@ const Canvas:FC = (props) => {
 		<>
 			<canvas
       id="canvas"
-      width={canvasWidth}
-      height={canvasHeight}
-      style={{ border: '1px solid #000' }}
+      width={canvasSide}
+      height={canvasSide}
+      className={canvasStyle.canvas}
 			onMouseDown={startDrawing}
       onMouseUp={endDrawing}
       onMouseMove={draw}	
