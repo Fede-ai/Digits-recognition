@@ -6,12 +6,16 @@ interface Point {
   y: number;
 }
 
-const Canvas:FC = (props) => {
+interface canvasProps {
+	setImg: (newImg: Uint8Array) => void;
+}
+
+const Canvas:FC<canvasProps> = (props) => {
 	const [height, setHeight] = useState(window.innerWidth);
   const [isDrawing, setIsDrawing] = useState(false);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const [prevPoint, setPrevPoint] = useState<Point | null>(null);
-
+	
 	var canvasSide = 0.3 * height;
 
 	useEffect(() => {	
@@ -21,14 +25,13 @@ const Canvas:FC = (props) => {
 			ctx.fillStyle = '#000';
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       setContext(ctx);	
-    }
-
+    }		
+		
 		window.addEventListener('resize', () => {
 			setHeight(window.innerWidth);
-			const ctx = canvas.getContext('2d');
-			if(ctx) ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			if(context) context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 		});
-	}, [])
+	}, [context])
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     if (e.button !== 0) return; // Ignore non-left mouse button
@@ -55,9 +58,24 @@ const Canvas:FC = (props) => {
     context.lineTo(currentPoint.x, currentPoint.y);
     context.closePath();
     context.stroke();
-
     setPrevPoint(currentPoint);
   };
+
+	const outputData = () => {
+		if (!context) return;
+		const imageData = context.getImageData(0, 0, canvasSide, canvasSide);
+		let data = imageData.data;
+		let essData: Uint8Array = new Uint8Array(data.length/4);
+		for (let i = 0; i < data.length; i++) {
+			if (i % 4 === 0)
+				essData[i/4] = data[i];
+		}
+		props.setImg(essData);
+	};
+
+	const clearCanvas = () => {
+		if(context) context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+	}
 
 	return(
 		<>
@@ -71,6 +89,8 @@ const Canvas:FC = (props) => {
       onMouseMove={draw}	
 			onMouseLeave={()=>{setIsDrawing(false)}}
     	/>
+			<button onClick={outputData}>Log Pixels</button>
+			<button onClick={clearCanvas}>Clear Canvas</button>
 		</>
 	)
 }
