@@ -61,7 +61,7 @@ const Canvas:FC<canvasProps> = (props) => {
     setPrevPoint(currentPoint);
   };
 
-	const outputData = () => {
+	const passData = () => {
 		if (!context) return;
 		const imageData = context.getImageData(0, 0, canvasSide, canvasSide);
 		let data = imageData.data;
@@ -90,8 +90,8 @@ const Canvas:FC<canvasProps> = (props) => {
 			onMouseLeave={()=>{setIsDrawing(false)}}
     	/>
 			<div className={canvasStyle.buttons}>
-				<button onClick={clearCanvas} className={canvasStyle.clear}>Clear canvas</button>
-				<button onClick={outputData} className={canvasStyle.process}>Process data</button>				
+				<button onClick={clearCanvas} className={canvasStyle.button}>Clear canvas</button>
+				<button onClick={passData} className={canvasStyle.button}>Process data</button>				
 			</div>
 		</>
 	)

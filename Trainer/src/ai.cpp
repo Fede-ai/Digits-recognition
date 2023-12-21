@@ -1,6 +1,7 @@
 #include "ai.h"
 #include <Windows.h>
 #include <fstream>
+#include <string>
 
 Ai::Ai(std::vector<int> inSizes)
 {
@@ -104,7 +105,7 @@ void Ai::save() const
 		{
 			for (int bias = 0; bias < layers[layer].biases.size(); bias++)
 			{
-				file << layers[layer].biases[bias];
+				file << std::to_string(layers[layer].biases[bias]);
 				if (bias == layers[layer].biases.size() - 1)
 					file << ';';
 				else
@@ -120,7 +121,7 @@ void Ai::save() const
 			{
 				for (int nodeBef = 0; nodeBef < layers[layer].numBef; nodeBef++)
 				{
-					file << layers[layer].weights[nodeAft][nodeBef];
+					file << std::to_string(layers[layer].weights[nodeAft][nodeBef]);
 					if (nodeBef == layers[layer].numBef - 1)
 						file << ';';
 					else
