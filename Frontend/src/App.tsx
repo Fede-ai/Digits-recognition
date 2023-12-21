@@ -1,27 +1,28 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import Canvas from './components/canvas';
 import './App.css';
 
-function App() {
-	const socket = useRef(new WebSocket('ws://192.168.1.191:9002'));
-
+var socket:WebSocket = new WebSocket('ws://192.168.10.25:9002');	
+var connected:boolean = false;
+function App() {	
+	
 	useEffect(() => {
-    socket.current.addEventListener('open', (event) => {
+    socket.addEventListener('open', (event) => {
       console.log('WebSocket connection opened:', event);
     });
-    socket.current.addEventListener('message', (event) => {
+    socket.addEventListener('message', (event) => {
       console.log('WebSocket message received:', event.data);
     });
-    socket.current.addEventListener('close', (event) => {
+    socket.addEventListener('close', (event) => {
       console.log('WebSocket connection closed:', event);
     });
-    socket.current.addEventListener('error', (event) => {
+    socket.addEventListener('error', (event) => {
       console.error('WebSocket error:', event);
     });
-	}, [socket]);
+	});
 	
 	const handleImgChage = (newImg: Uint8Array) => {
-		socket.current.send(newImg);
+		socket.send(newImg);
 	};
 
   return (
