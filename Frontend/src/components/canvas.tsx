@@ -11,12 +11,12 @@ interface canvasProps {
 }
 
 const Canvas:FC<canvasProps> = (props) => {
-	const [height, setHeight] = useState(window.innerWidth);
+	const [width, setWidth] = useState(window.innerWidth);
   const [isDrawing, setIsDrawing] = useState(false);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const [prevPoint, setPrevPoint] = useState<Point | null>(null);
 	
-	var canvasSide = 0.3 * height;
+	var canvasSide = 0.3 * width;
 
 	useEffect(() => {	
 		const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -28,7 +28,7 @@ const Canvas:FC<canvasProps> = (props) => {
     }		
 		
 		window.addEventListener('resize', () => {
-			setHeight(window.innerWidth);
+			setWidth(window.innerWidth);
 			if(context) context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 		});
 	}, [context])
@@ -89,8 +89,10 @@ const Canvas:FC<canvasProps> = (props) => {
       onMouseMove={draw}	
 			onMouseLeave={()=>{setIsDrawing(false)}}
     	/>
-			<button onClick={outputData}>Log Pixels</button>
-			<button onClick={clearCanvas}>Clear Canvas</button>
+			<div className={canvasStyle.buttons}>
+				<button onClick={clearCanvas} className={canvasStyle.clear}>Clear canvas</button>
+				<button onClick={outputData} className={canvasStyle.process}>Process data</button>				
+			</div>
 		</>
 	)
 }

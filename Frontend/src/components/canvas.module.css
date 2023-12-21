@@ -1,4 +1,19 @@
 .canvas {
-	margin-top: calc(50vh - 15vw);
+	margin-top: calc(50vh - (15vw + 2vh));
 	margin-left: 10vw;
+
+	border: 1.2vw solid rgb(180, 180, 180);
+	border-radius: 0.6vw;
+}
+
+.buttons {
+	display: flex;
+	flex-direction: column;
+
+	.clear {
+
+	}
+	.process {
+
+	}
 }

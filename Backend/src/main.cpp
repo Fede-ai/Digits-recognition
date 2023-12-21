@@ -1,29 +1,27 @@
 #include <websocketpp/server.hpp>
 #include <websocketpp/config/asio_no_tls.hpp>
-
-typedef websocketpp::server<websocketpp::config::asio> server;
-
-void on_message(websocketpp::connection_hdl hdl, server::message_ptr msg) {
-    server::connection_ptr con = server::get_instance_from_hdl(hdl);
-
-    try {
-        con->send(msg->get_payload(), msg->get_opcode());
-    }
-    catch (const websocketpp::lib::error_code& e) {
-        std::cout << "Echo failed because: " << e
-            << "(" << e.message() << ")" << std::endl;
-    }
-}
+#include <iostream>
 
 int main() {
-    server echo_server;
+    websocketpp::server<websocketpp::config::asio> server;
 
-    echo_server.set_message_handler(&on_message);
+    server.set_open_handler([](websocketpp::connection_hdl hdl) {
+        std::cout << "new connection\n";
+    });
+    server.set_message_handler([](websocketpp::connection_hdl hdl, websocketpp::config::asio::message_type::ptr msg) {
+        std::cout << "new message\n";
+    });
+    server.set_close_handler([](websocketpp::connection_hdl hdl) {
+        std::cout << "connection closed\n";
+    });
 
-    echo_server.init_asio();
-    echo_server.listen(9002);
-    echo_server.start_accept();
+    server.init_asio();
+    server.listen(9002);
+    server.start_accept();
 
-    echo_server.run();
+    std::cout << "starting server\n";
+
+    server.run();
+    
     return 0;
 }
