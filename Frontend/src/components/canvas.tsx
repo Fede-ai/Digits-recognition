@@ -88,6 +88,7 @@ const Canvas:FC<canvasProps> = (props) => {
       onMouseUp={endDrawing}
       onMouseMove={draw}	
 			onMouseLeave={()=>{setIsDrawing(false)}}
+			onContextMenu={(event)=>{event.preventDefault()}}
     	/>
 			<div className={canvasStyle.buttons}>
 				<button onClick={clearCanvas} className={canvasStyle.button}>Clear canvas</button>

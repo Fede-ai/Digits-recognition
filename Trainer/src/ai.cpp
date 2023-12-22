@@ -68,69 +68,53 @@ void Ai::learn(std::vector<DataPoint> datapoints, double learnRate)
 }
 void Ai::save() const
 {
-	//OPENFILENAMEA select;
-	//char path[100];
-	//
-	//ZeroMemory(&select, sizeof(select));
-	//select.lStructSize = sizeof(select);
-	//select.hwndOwner = NULL;
-	//select.lpstrFilter = (PSTR)"Text (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
-	//select.lpstrFile = path;
-	//select.lpstrFile[0] = '\0';
-	//select.nMaxFile = sizeof(path);
-	//select.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-	//select.lpstrDefExt = (LPCSTR)L"txt";
-	//
-	//if (GetSaveFileNameA(&select) == true)
+	std::fstream file;
+	file.open("save.txt", std::ios::out | std::ios::trunc);
+
+	if (!file.is_open())
+		return;
+
+	//write size
+	for (int layer = 0; layer < sizes.size(); layer++)
 	{
-		std::fstream file;
-		file.open("save.txt", std::ios::out | std::ios::trunc);
+		file << sizes[layer];
+		if (layer == sizes.size() - 1)
+			file << ';';
+		else
+			file << ',';
+	}
+	file << '\n';
 
-		if (!file.is_open())
-			return;
-
-		//write size
-		for (int layer = 0; layer < sizes.size(); layer++)
+	//write biases
+	for (int layer = 0; layer < layers.size(); layer++)
+	{
+		for (int bias = 0; bias < layers[layer].biases.size(); bias++)
 		{
-			file << sizes[layer];
-			if (layer == sizes.size() - 1)
+			file << std::to_string(layers[layer].biases[bias]);
+			if (bias == layers[layer].biases.size() - 1)
 				file << ';';
 			else
 				file << ',';
 		}
 		file << '\n';
+	}
 
-		//write weights
-		for (int layer = 0; layer < layers.size(); layer++)
+	//write weights
+	for (int layer = 0; layer < layers.size(); layer++)
+	{
+		for (int nodeAft = 0; nodeAft < layers[layer].numAft; nodeAft++)
 		{
-			for (int bias = 0; bias < layers[layer].biases.size(); bias++)
+			for (int nodeBef = 0; nodeBef < layers[layer].numBef; nodeBef++)
 			{
-				file << std::to_string(layers[layer].biases[bias]);
-				if (bias == layers[layer].biases.size() - 1)
+				file << std::to_string(layers[layer].weights[nodeAft][nodeBef]);
+				if (nodeBef == layers[layer].numBef - 1)
 					file << ';';
 				else
 					file << ',';
 			}
 			file << '\n';
 		}
-
-		//write biases
-		for (int layer = 0; layer < layers.size(); layer++)
-		{
-			for (int nodeAft = 0; nodeAft < layers[layer].numAft; nodeAft++)
-			{
-				for (int nodeBef = 0; nodeBef < layers[layer].numBef; nodeBef++)
-				{
-					file << std::to_string(layers[layer].weights[nodeAft][nodeBef]);
-					if (nodeBef == layers[layer].numBef - 1)
-						file << ';';
-					else
-						file << ',';
-				}
-				file << '\n';
-			}
-		}
-
-		file.close();
 	}
+
+	file.close();
 }

@@ -9,8 +9,9 @@
 	height: fit-content;
 	width: fit-content;
 
-	margin-left: 13vw;
-	margin-top: calc(48vh - 12.5vw);
+	margin: auto;
+	margin-left: 12vw;
+	margin-right: 0px;
 }
 
 .text {

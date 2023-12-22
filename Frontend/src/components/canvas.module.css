@@ -1,6 +1,7 @@
 .canvas {
-	margin-top: calc(48vh - 15vw);
-	margin-left: 14vw;
+	margin: auto;
+	margin-right: 0px;
+	margin-left: 15vw;
 
 	border: 1.2vw solid rgb(180, 180, 180);
 	border-radius: 0.6vw;
@@ -9,7 +10,7 @@
 .buttons {
 	display: flex;
 	flex-direction: column;
-	margin-top: calc(48vh + 7.5vw);
+	margin-top: calc(50vh + 7vw);
 	margin-left: 1.5vw;
 
 	.button {
