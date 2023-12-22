@@ -1,6 +1,6 @@
 .canvas {
 	margin-top: calc(48vh - 15vw);
-	margin-left: 10vw;
+	margin-left: 14vw;
 
 	border: 1.2vw solid rgb(180, 180, 180);
 	border-radius: 0.6vw;
@@ -17,6 +17,7 @@
 		padding: 0.6vw;
 		border-width: 0.2vw;
 		border-style: solid;
+		background-color: rgb(240, 240, 240);
 		border-color: rgb(180, 180, 180);
 		border-radius: 0.4vw;
 		font-size: 1vw;

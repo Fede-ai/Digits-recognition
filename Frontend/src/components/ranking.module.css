@@ -1,4 +1,22 @@
 .background {
 	display: flex;
 	flex-direction: column;
+	
+	background-color: rgb(240, 240, 240);	
+	border: .6vw solid rgb(180, 180, 180);
+	border-radius: 1.4vw;
+	padding: 1vw;
+	height: fit-content;
+	width: fit-content;
+
+	margin-left: 13vw;
+	margin-top: calc(48vh - 12.5vw);
+}
+
+.text {
+	padding: 0.2vw;
+	padding-left: 0.5vw;
+	padding-right: 0.5vw;
+	font-weight: bold;
+	font-size: 1.4vw;
 }

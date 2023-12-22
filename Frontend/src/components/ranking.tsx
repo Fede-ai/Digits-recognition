@@ -11,7 +11,8 @@ const Ranking:FC<rankingProps> = (props) => {
 		<div className={rankignStyles.background}>
 		{props.rank.map((num, index)=>{
 			return(
-				<div key={index}> {index}: {num.toString()} </div>
+				<div className={rankignStyles.text} 
+				key={index}>n° {index}: {num.toString()}% </div>
 			)})}
 		</div>
 	);
