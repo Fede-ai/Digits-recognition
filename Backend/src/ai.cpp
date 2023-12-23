@@ -1,50 +1,46 @@
 #include "ai.h"
 #include <Windows.h>
 #include <fstream>
+#include <sstream>
+#include <iostream>
 
 Ai::Ai(std::string path)
 {
 	std::fstream file;
+	std::string line, token;
 	file.open(path, std::ios::in);
+	if (!file.is_open())
+		return;
 
-	char div;
-	//extract layers size
-	do {
-		int value;
-		file >> value;
-		sizes.push_back(value);
-		file >> div;
-	} while (div == ',');
-	//load layers size
+	//extract and load layers sizes
+	getline(file, line);
+	std::istringstream sizesStream(line);
+	while (getline(sizesStream, token, ','))
+		sizes.push_back(stoi(token));
 	for (int i = 1; i < sizes.size(); i++)
-	{
 		layers.push_back(Layer(sizes[i - 1], sizes[i]));
-	}
-	//load biases
-	for (int layer = 0; layer < layers.size(); layer++)
+
+	for (auto& layer : layers)
 	{
-		for (int bias = 0; bias < sizes[layer + 1]; bias++)
+		getline(file, line);
+		std::istringstream layerStrean(line);
+
+		for (int bef = 0; bef < layer.numBef; bef++)
 		{
-			double value;
-			file >> value;
-			layers[layer].biases[bias] = value;
-			file >> div;
-		}
-	}
-	//load weights
-	for (int layer = 0; layer < layers.size(); layer++)
-	{
-		for (int nodeAft = 0; nodeAft < layers[layer].numAft; nodeAft++)
-		{
-			for (int nodeBef = 0; nodeBef < layers[layer].numBef; nodeBef++)
+			for (int aft = 0; aft < layer.numAft; aft++)
 			{
-				double value;
-				file >> value;
-				layers[layer].weights[nodeAft][nodeBef] = value;
-				file >> div;
+				getline(layerStrean, token, ',');
+				layer.weights[bef][aft] = stod(token);
 			}
 		}
+
+		for (int aft = 0; aft < layer.numAft; aft++)
+		{
+			getline(layerStrean, token, ',');
+			layer.biases[aft] = stod(token);
+		}
 	}
+
 	file.close();
 }
 

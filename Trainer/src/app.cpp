@@ -34,7 +34,7 @@ int App::run()
 		ai.learn(trainingBatch, 0.3);
 		i++;
 
-		if (i % 101 == 0)
+		if (i % 100 == 1 && i != 1)
 		{
 			ai.save();
 			std::cout << "saved\n";

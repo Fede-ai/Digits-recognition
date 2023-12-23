@@ -12,12 +12,22 @@
 	margin: auto;
 	margin-left: 12vw;
 	margin-right: 0px;
+
+	.first {
+		padding: 0.2vw;
+		padding-left: 0.5vw;
+		padding-right: 0.5vw;
+		font-weight: bold;
+		font-size: 1.4vw;
+	}
+
+	.notFirst {
+		padding: 0.2vw;
+		padding-left: 0.5vw;
+		padding-right: 0.5vw;
+		font-weight: 600;
+		font-size: 1.4vw;
+		color: rgb(90, 90, 90);
+	}
 }
 
-.text {
-	padding: 0.2vw;
-	padding-left: 0.5vw;
-	padding-right: 0.5vw;
-	font-weight: bold;
-	font-size: 1.4vw;
-}

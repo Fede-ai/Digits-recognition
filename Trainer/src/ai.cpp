@@ -75,45 +75,29 @@ void Ai::save() const
 		return;
 
 	//write size
-	for (int layer = 0; layer < sizes.size(); layer++)
+	for (auto size : sizes)
 	{
-		file << sizes[layer];
-		if (layer == sizes.size() - 1)
-			file << ';';
-		else
-			file << ',';
+		file << size << ',';
 	}
 	file << '\n';
 
-	//write biases
-	for (int layer = 0; layer < layers.size(); layer++)
+	//write biases and weights
+	for (auto layer : layers)
 	{
-		for (int bias = 0; bias < layers[layer].biases.size(); bias++)
+		for (int bef = 0; bef < layer.numBef; bef++)
 		{
-			file << std::to_string(layers[layer].biases[bias]);
-			if (bias == layers[layer].biases.size() - 1)
-				file << ';';
-			else
-				file << ',';
-		}
-		file << '\n';
-	}
-
-	//write weights
-	for (int layer = 0; layer < layers.size(); layer++)
-	{
-		for (int nodeAft = 0; nodeAft < layers[layer].numAft; nodeAft++)
-		{
-			for (int nodeBef = 0; nodeBef < layers[layer].numBef; nodeBef++)
+			for (int aft = 0; aft < layer.numAft; aft++)
 			{
-				file << std::to_string(layers[layer].weights[nodeAft][nodeBef]);
-				if (nodeBef == layers[layer].numBef - 1)
-					file << ';';
-				else
-					file << ',';
+				file << std::to_string(layer.weights[bef][aft]) << ',';
 			}
-			file << '\n';
 		}
+
+		for (int aft = 0; aft < layer.numAft; aft++)
+		{
+			file << std::to_string(layer.biases[aft]) << ',';
+		}
+
+		file << '\n';
 	}
 
 	file.close();

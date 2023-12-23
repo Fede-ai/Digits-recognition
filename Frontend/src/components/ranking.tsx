@@ -1,18 +1,36 @@
 import React, {FC} from "react";
-import rankignStyles from './ranking.module.css'
+import rankingStyles from './ranking.module.css'
 
 interface rankingProps {
-	rank:Number[];
+	values:number[];
+}
+
+interface dataPoint {
+	digit:number;
+	value:number;
 }
 
 const Ranking:FC<rankingProps> = (props) => {
 
+	const valuesInOrder = (values:number[]) => {
+		let data:dataPoint[] = [];
+		values.map((value, index) => (data.push({digit: index, value: value})));
+		data.sort((a, b) => b.value - a.value);
+		return (data);
+	}
+
 	return (
-		<div className={rankignStyles.background}>
-		{props.rank.map((num, index)=>{
-			return(
-				<div className={rankignStyles.text} 
-				key={index}>n° {index}: {num.toString()}% </div>
+		<div className={rankingStyles.background}>
+			{valuesInOrder(props.values).map((data, index) => {
+				let style:string;
+				if (index===0)
+					style = rankingStyles.first;
+				else
+					style = rankingStyles.notFirst;
+
+				return(
+					<div className={style} key={index}>
+					n° {data.digit}: {data.value.toFixed(3)}% </div>
 			)})}
 		</div>
 	);

@@ -6,7 +6,7 @@
 
 class WebSocketServerHandler {
 public:
-    //WebSocketServerHandler() : ai("C:/Users/feder/Desktop/Digits-recognition/Trainer/save.txt") {}
+    WebSocketServerHandler() : ai("C:/Users/feder/Desktop/Digits-recognition/Trainer/best save.txt") {}
 
     void on_message(websocketpp::connection_hdl hdl, websocketpp::config::asio::message_type::ptr msg) {
         std::istringstream ss(msg->get_payload());
@@ -15,8 +15,7 @@ public:
         while (std::getline(ss, token, ','))
            chars.push_back(std::stoi(token));
 
-        //auto predictions = ai.forwardProp(chars);
-        auto predictions = std::vector<double>{ 23.2, 213.4, 0.23, 54.0, 00.9, 21.5, 679.7, 0.031, 012, 123.4 };
+        auto predictions = ai.forwardProp(chars);
         std::string packet;
         for (auto value : predictions)
             packet.append(std::to_string(value) + ",");
@@ -25,7 +24,7 @@ public:
         server.send(hdl, packet, msg->get_opcode());
     }
 
-    //Ai ai;
+    Ai ai;
     websocketpp::server<websocketpp::config::asio> server;
 };
 

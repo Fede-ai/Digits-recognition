@@ -7,16 +7,25 @@ import './App.css';
 var socket = new WebSocket('ws://192.168.1.191:9002');	
 
 function App() {	
-	const [ranking, setRanking] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+	const [ranking, setRanking] = useState([0.000, 0.000, 0.00, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000]);
 
 	useEffect(() => {
     socket.addEventListener('message', (event) => {
-      let data:String = event.data;
+      let data:string = event.data;
 			let valuesStr = data.split(',');
+			let sum:number = 0;
+
 			let values:number[] = [];
-			for (let i = 0; i < valuesStr.length; i++)
-				values.push(Number(valuesStr[i]));
-			setRanking(values);
+			valuesStr.forEach(str => {
+				values.push(Number(str));
+				sum += Number(str);
+			});
+			let percentages:number[] = [];
+			values.forEach(value => {
+				percentages.push(Number(value * 100 / sum))
+			});
+
+			setRanking(percentages);
     });
     socket.addEventListener('close', (event) => {
       //console.log('WebSocket connection closed:', event);
@@ -53,7 +62,7 @@ function App() {
   return (
     <>
 			<Canvas setImg={async(data: Uint8Array) => {processImg(data)}}/>
-			<Ranking rank={ranking}/>
+			<Ranking values={ranking}/>
 		</>
   );
 }
