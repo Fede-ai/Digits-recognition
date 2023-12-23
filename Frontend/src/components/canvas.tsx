@@ -10,6 +10,8 @@ interface canvasProps {
 	setImg: (newImg: Uint8Array) => void;
 }
 
+var lineColor:string;
+
 const Canvas:FC<canvasProps> = (props) => {
 	const [width, setWidth] = useState(window.innerWidth);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -25,7 +27,7 @@ const Canvas:FC<canvasProps> = (props) => {
 			ctx.fillStyle = '#000';
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       setContext(ctx);	
-    }		
+		}
 		
 		window.addEventListener('resize', () => {
 			setWidth(window.innerWidth);
@@ -34,31 +36,32 @@ const Canvas:FC<canvasProps> = (props) => {
 	}, [context])
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    if (e.button !== 0) return; // Ignore non-left mouse button
+    if (e.button === 0) lineColor = '#FFF';
+		else if (e.button === 2) lineColor = '#000'
+		else return;
+
     setIsDrawing(true);
     setPrevPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
-  };
-
-  const endDrawing = () => {
-    setIsDrawing(false);
-    setPrevPoint(null);
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+  };  
+	const draw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		if (!isDrawing || !context) return;
-
     const currentPoint: Point = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 
-    context.strokeStyle = '#FFF	'; // Set stroke color
-    context.lineJoin = 'round';
-    context.lineWidth = canvasSide / 14;
-
+		context.strokeStyle = lineColor;
+		context.lineJoin = 'round';
+		context.lineWidth = canvasSide / 14;
+		if (lineColor === '#000')
+			context.lineWidth = canvasSide / 5
     context.beginPath();
     context.moveTo(prevPoint?.x || 0, prevPoint?.y || 0);
     context.lineTo(currentPoint.x, currentPoint.y);
     context.closePath();
     context.stroke();
     setPrevPoint(currentPoint);
+  };
+  const endDrawing = () => {
+    setIsDrawing(false);
+    setPrevPoint(null);
   };
 
 	const passData = () => {
@@ -72,7 +75,6 @@ const Canvas:FC<canvasProps> = (props) => {
 		}
 		props.setImg(essData);
 	};
-
 	const clearCanvas = () => {
 		if(context) context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 	}
@@ -84,11 +86,17 @@ const Canvas:FC<canvasProps> = (props) => {
       width={canvasSide}
       height={canvasSide}
       className={canvasStyle.canvas}
-			onMouseDown={startDrawing}
-      onMouseUp={endDrawing}
-      onMouseMove={draw}	
-			onMouseLeave={()=>{setIsDrawing(false)}}
 			onContextMenu={(event)=>{event.preventDefault()}}
+
+			onMouseDown={startDrawing}      
+			onMouseMove={draw}	
+      onMouseUp={endDrawing}
+			onMouseLeave={endDrawing}
+
+			//onTouchStart={}
+			//onTouchMove={}
+			//onTouchEnd={}
+			//onTouchCancel={}
     	/>
 			<div className={canvasStyle.buttons}>
 				<button onClick={clearCanvas} className={canvasStyle.button}>Clear canvas</button>

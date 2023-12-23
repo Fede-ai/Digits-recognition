@@ -4,10 +4,11 @@ import Ranking from './components/ranking';
 import './App.css';
 
 //var socket = new WebSocket('ws://192.168.10.25:9002');	
-var socket = new WebSocket('ws://192.168.1.191:9002');	
+//var socket = new WebSocket('ws://192.168.1.191:9002');	
+var socket = new WebSocket('ws://2.235.241.210:9002');
 
 function App() {	
-	const [ranking, setRanking] = useState([0.000, 0.000, 0.00, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000]);
+	const [ranking, setRanking] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
 	useEffect(() => {
     socket.addEventListener('message', (event) => {
