@@ -7,7 +7,7 @@ interface Point {
 }
 
 interface canvasProps {
-	setImg: (newImg: Uint8Array) => void;
+	sendData: (newImg: Uint8Array) => void;
 }
 
 var lineColor:string;
@@ -28,14 +28,14 @@ const Canvas:FC<canvasProps> = (props) => {
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       setContext(ctx);	
 		}
-		
+
 		window.addEventListener('resize', () => {
 			setWidth(window.innerWidth);
 			if(context) context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 		});
 	}, [context])
 
-	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+	const startClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     if (e.button === 0) lineColor = '#FFF';
 		else if (e.button === 2) lineColor = '#000'
 		else return;
@@ -43,10 +43,10 @@ const Canvas:FC<canvasProps> = (props) => {
     setIsDrawing(true);
     setPrevPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
   };  
-	const draw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+	const moveClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		if (!isDrawing || !context) return;
-    const currentPoint: Point = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 
+    const currentPoint: Point = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 		context.strokeStyle = lineColor;
 		context.lineJoin = 'round';
 		context.lineWidth = canvasSide / 14;
@@ -59,21 +59,20 @@ const Canvas:FC<canvasProps> = (props) => {
     context.stroke();
     setPrevPoint(currentPoint);
   };
-  const endDrawing = () => {
+  const endClick = () => {
     setIsDrawing(false);
     setPrevPoint(null);
   };
 
-	const passData = () => {
+	const processAndSendData = () => {
 		if (!context) return;
-		const imageData = context.getImageData(0, 0, canvasSide, canvasSide);
-		let data = imageData.data;
+		const data = context.getImageData(0, 0, canvasSide, canvasSide).data;
 		let essData: Uint8Array = new Uint8Array(data.length/4);
 		for (let i = 0; i < data.length; i++) {
 			if (i % 4 === 0)
 				essData[i/4] = data[i];
 		}
-		props.setImg(essData);
+		props.sendData(essData);
 	};
 	const clearCanvas = () => {
 		if(context) context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -86,21 +85,20 @@ const Canvas:FC<canvasProps> = (props) => {
       width={canvasSide}
       height={canvasSide}
       className={canvasStyle.canvas}
-			onContextMenu={(event)=>{event.preventDefault()}}
+			onContextMenu={(event) => {event.preventDefault()}}
 
-			onMouseDown={startDrawing}      
-			onMouseMove={draw}	
-      onMouseUp={endDrawing}
-			onMouseLeave={endDrawing}
-
-			//onTouchStart={}
-			//onTouchMove={}
-			//onTouchEnd={}
-			//onTouchCancel={}
+			onMouseDown={startClick}      
+			onMouseMove={moveClick}	
+      onMouseUp={endClick}
+			onMouseLeave={endClick}
     	/>
 			<div className={canvasStyle.buttons}>
-				<button onClick={clearCanvas} className={canvasStyle.button}>Clear canvas</button>
-				<button onClick={passData} className={canvasStyle.button}>Process data</button>				
+				<button onClick={clearCanvas} className={canvasStyle.button}>
+					Clear canvas
+				</button>
+				<button onClick={processAndSendData} className={canvasStyle.button}>
+					Process data
+				</button>				
 			</div>
 		</>
 	)

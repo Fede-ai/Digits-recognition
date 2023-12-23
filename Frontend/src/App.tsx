@@ -62,7 +62,7 @@ function App() {
 
   return (
     <>
-			<Canvas setImg={async(data: Uint8Array) => {processImg(data)}}/>
+			<Canvas sendData={async(data: Uint8Array) => {processImg(data)}}/>
 			<Ranking values={ranking}/>
 		</>
   );
