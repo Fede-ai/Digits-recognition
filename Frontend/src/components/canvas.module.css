@@ -10,7 +10,7 @@
 .buttons {
 	display: flex;
 	flex-direction: column;
-	margin-top: calc(50vh + 7vw);
+	margin-top: calc(50vh + 10vw);
 	margin-left: 1.5vw;
 
 	.button {

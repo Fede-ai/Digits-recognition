@@ -5,7 +5,8 @@ import './App.css';
 
 //var socket = new WebSocket('ws://192.168.10.25:9002');	
 //var socket = new WebSocket('ws://192.168.1.191:9002');	
-var socket = new WebSocket('ws://2.235.241.210:9002');
+var socket = new WebSocket('ws://192.168.1.43:9002');
+//var socket = new WebSocket('ws://2.235.241.210:9002');
 
 function App() {	
 	const [ranking, setRanking] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -31,12 +32,18 @@ function App() {
     socket.addEventListener('close', (event) => {
       //console.log('WebSocket connection closed:', event);
     });
-	});
+	}, []);
 	
-	const processImg = (data: Uint8Array) => {
+	const sendImg = async (newImg: Uint8ClampedArray) => {
+		//only take one value out of four
+		let essData = new Uint8Array(newImg.length/4);
+		for (let i = 0; i < newImg.length; i++) {
+			if (i % 4 === 0)
+				essData[i/4] = newImg[i];
+		}
 		//lower resolution
-		const ratio = Math.sqrt(data.length) / 28;
-    const newData = new Uint8Array(28 * 28);
+		const ratio = Math.sqrt(essData.length) / 28;
+    const compData = new Uint8Array(28 * 28);
     for (let y = 0; y < 28; y++) {
       for (let x = 0; x < 28; x++) {
         let sum = 0;
@@ -44,25 +51,25 @@ function App() {
           for (let j = 0; j < ratio; j++) {
             const originalX = Math.floor(x * ratio) + i;
             const originalY = Math.floor(y * ratio) + j;
-            const index = originalY * Math.sqrt(data.length) + originalX;
-            sum += data[index];
+            const index = originalY * Math.sqrt(essData.length) + originalX;
+            sum += essData[index];
           }
         }
         const average = sum / (ratio * ratio);
-        newData[y * 28 + x] = Math.min(Math.round(average), 255);
+        compData[y * 28 + x] = Math.min(Math.round(average), 255);
       }
     }
-
-		//transform the image to a string and send it
-		let packet:string = "";
-		for (let i = 0; i < newData.length; i++)
-			packet = packet + newData[i] + ",";
+		//add img to a string and send
+		let packet = "";
+		for (let i = 0; i < compData.length; i++)
+			packet = packet + compData[i] + ",";
 		socket.send(packet);
+		console.log("data processed and sent");
 	};
 
   return (
     <>
-			<Canvas sendData={async(data: Uint8Array) => {processImg(data)}}/>
+			<Canvas passImg={sendImg}/>
 			<Ranking values={ranking}/>
 		</>
   );
