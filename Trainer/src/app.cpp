@@ -6,7 +6,8 @@
 
 App::App()
 	:
-	ai({ 784, 400, 10 })
+	//ai("best save.txt")
+	ai(std::vector<int>{ 784, 400, 10 })
 {
 	fillDatasets();
 	std::cout << "finished loading the images\n";
@@ -17,17 +18,23 @@ int App::run()
 	int i = 0;
 	while (true)
 	{	
-		//test every 10 'learn's
-		if (i % 10 == 0)
+		//test every 25 'learn's
+		if (i % 25 == 0)
 		{
 			auto testingBatch = createBatch(testingDataset, 128);
-			int correct = 0;
+			int normalCorrect = 0, modifiedCorrect = 0;
+			double normalLoss = ai.loss(testingBatch);
 			for (auto& datapoint : testingBatch)
 			{
 				if (getPrediction(datapoint) == getTarget(datapoint))
-					correct++;
+					normalCorrect++;
+				datapoint = applyRandomChanges(datapoint);
+				if (getPrediction(datapoint) == getTarget(datapoint))
+					modifiedCorrect++;
 			}
-			std::cout << i << ", loss: " << ai.loss(testingBatch) << ", correct: " << correct << "/128 - " << correct / 1.28 << "%\n";
+			std::cout << "training number " << i << "\n";
+			std::cout << "normal loss: " << normalLoss << ", correct: " << normalCorrect << "/128 - " << normalCorrect / 1.28 << "%\n";
+			std::cout << "modified loss: " << ai.loss(testingBatch) << ", correct: " << modifiedCorrect << "/128 - " << modifiedCorrect / 1.28 << "%\n";
 		}
 
 		auto trainingBatch = createBatch(trainingDataset, 64);
