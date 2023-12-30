@@ -33,7 +33,7 @@ int App::run()
 		auto trainingBatch = createBatch(trainingDataset, 64);
 		for (auto& image : trainingBatch)
 			image = applyRandomChanges(image);
-		ai.learn(trainingBatch, 0.3);
+		ai.learn(trainingBatch, 0.2);
 		i++;
 
 		//save nn to file every 100 'learn's 
@@ -95,7 +95,7 @@ void App::fillDatasets()
 		testingDataset.push_back(DataPoint(data, targets));
 	}
 	test.close();
-	return;
+	
 	std::fstream train("data/train.csv");
 	train.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //skip labels row
 	for (int nImg = 0; nImg < trainingDatasetSize; nImg++)
@@ -171,7 +171,7 @@ DataPoint App::applyRandomChanges(DataPoint datapoint)
 		{
 			int xSrc = x + xTrans;
 			int ySrc = y + yTrans;
-			if (xSrc >= 28 || ySrc >= 28)
+			if (xSrc >= 28 || xSrc < 0|| ySrc >= 28 || ySrc < 0)
 				translatedImage.push_back(0);
 			else
 				translatedImage.push_back(scaledImage[xSrc + ySrc * 28]);
