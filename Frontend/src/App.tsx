@@ -5,7 +5,7 @@ import './App.css';
 
 //var socket = new WebSocket('ws://192.168.10.25:9002');	
 //var socket = new WebSocket('ws://192.168.1.191:9002');	
-var socket = new WebSocket('ws://192.168.1.43:9002');
+var socket = new WebSocket('ws:/192.168.0.167:9002');
 //var socket = new WebSocket('ws://2.235.241.210:9002');
 
 function App() {	
@@ -35,6 +35,7 @@ function App() {
 	}, []);
 	
 	const sendImg = async (newImg: Uint8ClampedArray) => {
+		if (socket.readyState !== socket.OPEN) return
 		//only take one value out of four
 		let essData = new Uint8Array(newImg.length/4);
 		for (let i = 0; i < newImg.length; i++) {

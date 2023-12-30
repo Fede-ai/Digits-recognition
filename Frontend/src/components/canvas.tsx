@@ -58,7 +58,7 @@ const Canvas:FC<canvasProps> = ({passImg}) => {
     const currentPoint: Point = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 		context.strokeStyle = color;
 		context.lineJoin = 'round';
-		context.lineWidth = canvasSide / 14;
+		context.lineWidth = canvasSide / 10;
 		if (color === '#000')
 			context.lineWidth = canvasSide / 5;
     context.beginPath();
