@@ -15,19 +15,12 @@ function App() {
     socket.addEventListener('message', (event) => {
       let data:string = event.data;
 			let valuesStr = data.split(',');
-			let sum:number = 0;
 
 			let values:number[] = [];
 			valuesStr.forEach(str => {
-				values.push(Number(str));
-				sum += Number(str);
+				values.push(Number(str) * 100);
 			});
-			let percentages:number[] = [];
-			values.forEach(value => {
-				percentages.push(Number(value * 100 / sum))
-			});
-
-			setRanking(percentages);
+			setRanking(values);
     });
     socket.addEventListener('close', (event) => {
       //console.log('WebSocket connection closed:', event);

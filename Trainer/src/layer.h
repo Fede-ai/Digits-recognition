@@ -13,7 +13,7 @@ public:
 	void applyGradients(double learnRate);
 	void clearGradients();
 
-	static double loss(double value, double target);
+	static double loss(std::vector<double> values, std::vector<double> targets);
 	static int random(int min, int max);
 
 	const int numBef, numAft;	
@@ -24,12 +24,11 @@ public:
 	std::vector<std::vector<double>> weights;
 
 private:
-	static double hiddenAct(double value);
-	static double hiddenActDer(double value);
-	static double outputAct(double value);
-	static double outputActDer(double value);
+	static std::vector<double> hiddenAct(std::vector<double> values);
+	static std::vector<double> hiddenActDer(std::vector<double> values);
+	static std::vector<double> outputAct(std::vector<double> values);
 
-	static double lossDer(double value, double target);	
+	static std::vector<double> lossAndOutputActDer(std::vector<double> values, std::vector<double> targets);	
 
 	//relative to the nodes after
 	std::vector<double> biasesGradients;

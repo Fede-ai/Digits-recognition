@@ -39,12 +39,12 @@ std::vector<double> Layer::computeHidden(std::vector<double> inputs) const
 		{
 			value += inputs[bef] * weights[bef][aft];
 		}
+		values.push_back(value);
 		//weightedValues.push_back(value);
-		values.push_back(hiddenAct(value));
 	}
 
 	//activatedValues = values;
-	return values;
+	return hiddenAct(values);
 }
 std::vector<double> Layer::computeOutput(std::vector<double> inputs) const
 {
@@ -63,22 +63,40 @@ std::vector<double> Layer::computeOutput(std::vector<double> inputs) const
 			value += inputs[bef] * weights[bef][aft];
 		}
 		//weightedValues.push_back(value);
-		values.push_back(outputAct(value));
+		values.push_back(value);
 	}
 
 	//activatedValues = values;
-	return values;
+	return outputAct(values);
 }
 
-double Layer::hiddenAct(double value)
+std::vector<double> Layer::hiddenAct(std::vector<double> values)
 {
+	std::vector<double> activated;
+
 	//sigmoid
-	return 1 / (1 + exp(-value));
+	//return 1 / (1 + exp(-value));
 
 	//ReLU
-	//return std::max(value, double(0));
+	for (auto v : values)
+		activated.push_back(std::max(v, double(0)));
+
+	return activated;
 }
-double Layer::outputAct(double value)
+std::vector<double> Layer::outputAct(std::vector<double> values)
 {
-	return 1 / (1 + exp(-value));
+	std::vector<double> activated;
+
+	//softmax
+	double expSum = 0;
+	for (double v : values) {
+		double exp = std::exp(v);
+		activated.push_back(exp);
+		expSum += exp;
+	}
+	for (double& v : activated) {
+		v /= expSum;
+	}
+
+	return activated;
 }

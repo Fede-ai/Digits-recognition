@@ -15,6 +15,6 @@ public:
 	std::vector<std::vector<double>> weights;
 
 private:
-	static double hiddenAct(double value);
-	static double outputAct(double value);
+	static std::vector<double> hiddenAct(std::vector<double> values);
+	static std::vector<double> outputAct(std::vector<double> values);
 };

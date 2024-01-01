@@ -86,10 +86,10 @@ double Ai::loss(std::vector<DataPoint> datapoints)
 	for (auto datapoint : datapoints)
 	{
 		std::vector<double> predictions = forwardProp(datapoint);
-		for (int nOut = 0; nOut < predictions.size(); nOut++)
-		{
-			loss += Layer::loss(predictions[nOut], datapoint.target[nOut]);
-		}
+		std::vector<double> target;
+		for (auto t : datapoint.target)
+			target.push_back(t);
+		loss += Layer::loss(predictions, target);
 	}
 	return (loss / datapoints.size());
 }
