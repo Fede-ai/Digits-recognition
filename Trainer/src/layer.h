@@ -10,7 +10,7 @@ public:
 	std::vector<double> computeOutputNodeValues(std::vector<double> targets) const;
 
 	void updateGradients(std::vector<double> nodeValues);
-	void applyGradients(double learnRate);
+	void applyGradients(double learnRate, double momentum, int batchSize);
 	void clearGradients();
 
 	static double loss(std::vector<double> values, std::vector<double> targets);
@@ -31,9 +31,9 @@ private:
 	static std::vector<double> lossAndOutputActDer(std::vector<double> values, std::vector<double> targets);	
 
 	//relative to the nodes after
-	std::vector<double> biasesGradients;
+	std::vector<double> biasesGradients, biasesVelocities;
 	//notation: weightsGradients[nodeBef][nodeAft]
-	std::vector<std::vector<double>> weightsGradients;
+	std::vector<std::vector<double>> weightsGradients, weightsVelocities;
 
 	//the activatedValues of the layer before, one for each node bef
 	std::vector<double> inputValues;

@@ -12,6 +12,7 @@ Layer::Layer(int inNumBef, int inNumAft)
 		biases.push_back(random(0, 100'000) / 100'000.f - 0.5);
 		biasesGradients.push_back(0);
 	}
+	biasesVelocities = biasesGradients;
 	//setup weights
 	for (int bef = 0; bef < numBef; bef++)
 	{
@@ -25,6 +26,7 @@ Layer::Layer(int inNumBef, int inNumAft)
 		weights.push_back(partialWeights);
 		weightsGradients.push_back(partialWeightsGradients);
 	}
+	weightsVelocities = weightsGradients;
 }
 
 std::vector<double> Layer::computeHidden(std::vector<double> inputs)
@@ -110,19 +112,23 @@ void Layer::updateGradients(std::vector<double> nodeValues)
 		biasesGradients[aft] += nodeValues[aft];
 	}
 }
-void Layer::applyGradients(double learnRate)
+void Layer::applyGradients(double learnRate, double momentum, int batchSize)
 {
 	for (int bef = 0; bef < numBef; bef++)
 	{
 		for (int aft = 0; aft < numAft; aft++)
 		{
-			weights[bef][aft] -= weightsGradients[bef][aft] * learnRate;
+			weightsGradients[bef][aft] /= double(batchSize);
+			weightsVelocities[bef][aft] = momentum * weightsVelocities[bef][aft] + (1 - momentum) * weightsGradients[bef][aft];
+			weights[bef][aft] -= weightsVelocities[bef][aft] * learnRate;
 		}
 	}
 		
 	for (int aft = 0; aft < numAft; aft++)
 	{
-		biases[aft] -= biasesGradients[aft] * learnRate;
+		biasesGradients[aft] /= double(batchSize);
+		biasesVelocities[aft] = momentum * biasesVelocities[aft] + (1 - momentum) * biasesGradients[aft];
+		biases[aft] -= biasesVelocities[aft] * learnRate;
 	}
 }
 void Layer::clearGradients() 

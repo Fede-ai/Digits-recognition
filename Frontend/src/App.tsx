@@ -5,7 +5,7 @@ import './App.css';
 
 //var socket = new WebSocket('ws://192.168.10.25:9002');	
 //var socket = new WebSocket('ws://192.168.1.191:9002');	
-var socket = new WebSocket('ws:/192.168.0.167:9002');
+var socket = new WebSocket('ws:/192.168.100.41:9002');
 //var socket = new WebSocket('ws://2.235.241.210:9002');
 
 function App() {	

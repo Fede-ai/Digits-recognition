@@ -94,13 +94,13 @@ double Ai::loss(std::vector<DataPoint> datapoints)
 	return (loss / datapoints.size());
 }
 
-void Ai::learn(std::vector<DataPoint> datapoints, double learnRate)
+void Ai::learn(std::vector<DataPoint> datapoints, double learnRate, double momentum)
 {
 	for (auto& datapoint : datapoints)
 		backProp(datapoint);
 
 	for (auto& layer : layers)
-		layer.applyGradients(learnRate/datapoints.size());
+		layer.applyGradients(learnRate, momentum, datapoints.size());
 
 	for (auto& layer : layers)
 		layer.clearGradients();

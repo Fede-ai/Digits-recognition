@@ -42,7 +42,7 @@ int App::run()
 		auto trainingBatch = createBatch(trainDataset, 64);
 		for (auto& image : trainingBatch)
 			image = applyRandomChanges(image);
-		ai.learn(trainingBatch, 0.05);
+		ai.learn(trainingBatch, 0.05, 0.3);
 		i++;
 
 		//save nn to file every 100 'learn's 

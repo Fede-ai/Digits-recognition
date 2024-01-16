@@ -10,7 +10,7 @@ public:
 	Ai(std::string path);
 	std::vector<double> forwardProp(DataPoint datapoint);
 	double loss(std::vector<DataPoint> datapoints);
-	void learn(std::vector<DataPoint> datapoints, double learnRate);
+	void learn(std::vector<DataPoint> datapoints, double learnRate, double momentum);
 	void save() const;
 
 private:	
