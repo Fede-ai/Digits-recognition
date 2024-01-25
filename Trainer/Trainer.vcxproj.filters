@@ -35,10 +35,10 @@
     <ClInclude Include="src\app.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\dataPoint.h">
+    <ClInclude Include="src\layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\layer.h">
+    <ClInclude Include="src\dataPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
